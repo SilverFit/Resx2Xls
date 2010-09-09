@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="ResxData" targetNamespace="http://tempuri.org/ResxData.xsd" xmlns:mstns="http://tempuri.org/ResxData.xsd" xmlns="http://tempuri.org/ResxData.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="ResxData" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="ResxData" msprop:Generator_DataSetName="ResxData">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="TranslationSource" msprop:Generator_UserTableName="TranslationSource" msprop:Generator_RowDeletedName="TranslationSourceRowDeleted" msprop:Generator_RowChangedName="TranslationSourceRowChanged" msprop:Generator_RowClassName="TranslationSourceRow" msprop:Generator_RowChangingName="TranslationSourceRowChanging" msprop:Generator_RowEvArgName="TranslationSourceRowChangeEvent" msprop:Generator_RowEvHandlerName="TranslationSourceRowChangeEventHandler" msprop:Generator_TableClassName="TranslationSourceDataTable" msprop:Generator_TableVarName="tableTranslationSource" msprop:Generator_RowDeletingName="TranslationSourceRowDeleting" msprop:Generator_TablePropName="TranslationSource">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="FileSource" msprop:Generator_UserColumnName="FileSource" msprop:Generator_ColumnVarNameInTable="columnFileSource" msprop:Generator_ColumnPropNameInRow="FileSource" msprop:Generator_ColumnPropNameInTable="FileSourceColumn" type="xs:string" />
+              <xs:element name="Id" msdata:AutoIncrement="true" msprop:Generator_UserColumnName="Id" msprop:Generator_ColumnPropNameInRow="Id" msprop:Generator_ColumnVarNameInTable="columnId" msprop:Generator_ColumnPropNameInTable="IdColumn" type="xs:int" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="SecondaryTranslation" msprop:Generator_UserTableName="SecondaryTranslation" msprop:Generator_RowDeletedName="SecondaryTranslationRowDeleted" msprop:Generator_RowChangedName="SecondaryTranslationRowChanged" msprop:Generator_RowClassName="SecondaryTranslationRow" msprop:Generator_RowChangingName="SecondaryTranslationRowChanging" msprop:Generator_RowEvArgName="SecondaryTranslationRowChangeEvent" msprop:Generator_RowEvHandlerName="SecondaryTranslationRowChangeEventHandler" msprop:Generator_TableClassName="SecondaryTranslationDataTable" msprop:Generator_TableVarName="tableSecondaryTranslation" msprop:Generator_RowDeletingName="SecondaryTranslationRowDeleting" msprop:Generator_TablePropName="SecondaryTranslation">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Culture" msprop:Generator_UserColumnName="Culture" msprop:Generator_ColumnPropNameInRow="Culture" msprop:Generator_ColumnVarNameInTable="columnCulture" msprop:Generator_ColumnPropNameInTable="CultureColumn" type="xs:string" />
+              <xs:element name="Value" msprop:Generator_UserColumnName="Value" msprop:Generator_ColumnPropNameInRow="Value" msprop:Generator_ColumnVarNameInTable="columnValue" msprop:Generator_ColumnPropNameInTable="ValueColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="Id" msdata:AutoIncrement="true" msprop:Generator_UserColumnName="Id" msprop:Generator_ColumnPropNameInRow="Id" msprop:Generator_ColumnVarNameInTable="columnId" msprop:Generator_ColumnPropNameInTable="IdColumn" type="xs:int" />
+              <xs:element name="ResxKey" msprop:Generator_UserColumnName="ResxKey" msprop:Generator_ColumnPropNameInRow="ResxKey" msprop:Generator_ColumnVarNameInTable="columnResxKey" msprop:Generator_ColumnPropNameInTable="ResxKeyColumn" type="xs:int" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="PrimaryTranslation" msprop:Generator_UserTableName="PrimaryTranslation" msprop:Generator_RowDeletedName="PrimaryTranslationRowDeleted" msprop:Generator_RowChangedName="PrimaryTranslationRowChanged" msprop:Generator_RowClassName="PrimaryTranslationRow" msprop:Generator_RowChangingName="PrimaryTranslationRowChanging" msprop:Generator_RowEvArgName="PrimaryTranslationRowChangeEvent" msprop:Generator_RowEvHandlerName="PrimaryTranslationRowChangeEventHandler" msprop:Generator_TableClassName="PrimaryTranslationDataTable" msprop:Generator_TableVarName="tablePrimaryTranslation" msprop:Generator_RowDeletingName="PrimaryTranslationRowDeleting" msprop:Generator_TablePropName="PrimaryTranslation">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Id" msdata:AutoIncrement="true" msprop:Generator_UserColumnName="Id" msprop:Generator_ColumnPropNameInRow="Id" msprop:Generator_ColumnVarNameInTable="columnId" msprop:Generator_ColumnPropNameInTable="IdColumn" type="xs:int" />
+              <xs:element name="Key" msprop:Generator_UserColumnName="Key" msprop:Generator_ColumnPropNameInRow="Key" msprop:Generator_ColumnVarNameInTable="columnKey" msprop:Generator_ColumnPropNameInTable="KeyColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="Value" msprop:Generator_UserColumnName="Value" msprop:Generator_ColumnPropNameInRow="Value" msprop:Generator_ColumnVarNameInTable="columnValue" msprop:Generator_ColumnPropNameInTable="ValueColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="TranslationSource" msprop:Generator_UserColumnName="TranslationSource" msprop:Generator_ColumnPropNameInRow="TranslationSource" msprop:Generator_ColumnVarNameInTable="columnTranslationSource" msprop:Generator_ColumnPropNameInTable="TranslationSourceColumn" type="xs:int" />
+              <xs:element name="Comment" msprop:Generator_UserColumnName="Comment" msprop:Generator_ColumnPropNameInRow="Comment" msprop:Generator_ColumnVarNameInTable="columnComment" msprop:Generator_ColumnPropNameInTable="CommentColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="Implicit" msprop:Generator_UserColumnName="Implicit" msprop:Generator_ColumnVarNameInTable="columnImplicit" msprop:Generator_ColumnPropNameInRow="Implicit" msprop:Generator_ColumnPropNameInTable="ImplicitColumn" type="xs:boolean" default="false" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:TranslationSource" />
+      <xs:field xpath="mstns:Id" />
+    </xs:unique>
+    <xs:unique name="SecondaryTranslation_Constraint1" msdata:ConstraintName="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:SecondaryTranslation" />
+      <xs:field xpath="mstns:Id" />
+    </xs:unique>
+    <xs:unique name="PrimaryTranslation_Constraint1" msdata:ConstraintName="Constraint1">
+      <xs:selector xpath=".//mstns:PrimaryTranslation" />
+      <xs:field xpath="mstns:Id" />
+    </xs:unique>
+    <xs:keyref name="Resx_ResxKey" refer="Constraint1" msprop:rel_Generator_UserRelationName="TranslationSource_PrimaryTranslation" msprop:rel_Generator_RelationVarName="relationTranslationSource_PrimaryTranslation" msprop:rel_Generator_UserChildTable="PrimaryTranslation" msprop:rel_Generator_UserParentTable="TranslationSource" msprop:rel_Generator_ParentPropName="ResxRow" msprop:rel_Generator_ChildPropName="GetPrimaryTranslationRows" msdata:RelationName="TranslationSource_PrimaryTranslation" msdata:UpdateRule="None" msdata:DeleteRule="None">
+      <xs:selector xpath=".//mstns:PrimaryTranslation" />
+      <xs:field xpath="mstns:TranslationSource" />
+    </xs:keyref>
+    <xs:keyref name="ResxKey_ResxLocalized" refer="PrimaryTranslation_Constraint1" msprop:rel_Generator_UserRelationName="PrimaryTranslation_SecondaryTranslation" msprop:rel_Generator_RelationVarName="relationPrimaryTranslation_SecondaryTranslation" msprop:rel_Generator_UserChildTable="SecondaryTranslation" msprop:rel_Generator_UserParentTable="PrimaryTranslation" msprop:rel_Generator_ParentPropName="PrimaryTranslationRow" msprop:rel_Generator_ChildPropName="GetResxLocalizedRows" msdata:RelationName="PrimaryTranslation_SecondaryTranslation" msdata:UpdateRule="None">
+      <xs:selector xpath=".//mstns:SecondaryTranslation" />
+      <xs:field xpath="mstns:ResxKey" />
+    </xs:keyref>
+  </xs:element>
+</xs:schema>

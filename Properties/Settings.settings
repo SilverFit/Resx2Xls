@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Resx2Xls.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="FolderPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ExcludeList" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.Name;.Parent;.ZOrder;.Type</Value>
+    </Setting>
+    <Setting Name="CultureList" Type="System.String" Scope="User">
+      <Value Profile="(Default)">it-IT;en-US;fr-FR;de-DE;es-ES</Value>
+    </Setting>
+    <Setting Name="FolderNamespaceNaming" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
