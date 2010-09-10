@@ -489,7 +489,8 @@ namespace Resx2Xls
 
             // Create resx reader for primary language
             var primaryResx = Resx.Read(fileName)
-                                  .Where(k => this.ValidateKey(k.Key));
+                                  .Where(k => this.ValidateKey(k.Key))
+                                  .Where(k => !string.IsNullOrEmpty(k.Value));
 
             if (primaryResx.Count() > 0)
             {
@@ -507,7 +508,8 @@ namespace Resx2Xls
                     if (new FileInfo(culturefile).Exists)
                     {
                         var rows = Resx.Read(culturefile)
-                                       .Where(k => this.ValidateKey(k.Key));
+                                       .Where(k => this.ValidateKey(k.Key))
+                                       .Where(k => !string.IsNullOrEmpty(k.Value));
                         secondaryResxs.Add(culture, rows);
                     }
                 }
