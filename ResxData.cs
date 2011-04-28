@@ -1,5 +1,4 @@
-﻿
-namespace Resx2Xls
+﻿namespace Resx2Xls
 {
     using System;
     using System.Collections;
@@ -19,12 +18,15 @@ namespace Resx2Xls
     /// </summary>
     public partial class ResxData
     {
+        #region Excel rows
         private const int ExcelMetadataRow = 1;
 
         private const int ExcelHeaderRow = 2;
 
         private const int ExcelDataRow = 3;
+        #endregion
 
+        #region Excel columns
         /// <summary>
         /// Column index for key
         /// </summary>
@@ -48,11 +50,23 @@ namespace Resx2Xls
         /// <summary>
         /// Column index for first culture translation
         /// </summary>
-        private const int ExcelCultureColumn = 3;
+        private const int ExcelCultureColumn = 4;
+        #endregion
 
-        private string[] excludeList;
+        /// <summary>
+        /// List of keys that will be ignored from resx files
+        /// </summary>
+        private List<string> excludeList;
 
-        private string[] cultureList;
+        /// <summary>
+        /// Culture columns that will be added in the Excel document
+        /// </summary>
+        private List<CultureInfo> exportCultures;
+
+        /// <summary>
+        /// Import log of reading the resx files
+        /// </summary>
+        private string ReadResxReport = string.Empty;
 
         /// <summary>
         /// Create a ResxData instance from an xls file
@@ -131,12 +145,12 @@ namespace Resx2Xls
             string path,
             bool deepSearch,
             bool purge,
-            string[] cultureList,
-            string[] excludeList,
+            List<CultureInfo> cultureList,
+            List<string> excludeList,
             bool useFolderNamespacePrefix)
         {
             ResxData rd = new ResxData();
-            rd.cultureList = cultureList;
+            rd.exportCultures = cultureList;
             rd.excludeList = excludeList;
 
             var searchoptions = deepSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
@@ -144,9 +158,10 @@ namespace Resx2Xls
 
             foreach (string f in files)
             {
-                if (!ResxIsCultureSpecific(f))
+                var resx = new Resx(f);
+                if (!resx.IsCultureSpecific)
                 {
-                    rd.ReadResx(f, path, purge, useFolderNamespacePrefix);
+                    rd.ReadResx(resx, path, purge, useFolderNamespacePrefix);
                 }
             }
 
@@ -161,13 +176,13 @@ namespace Resx2Xls
         /// <summary>
         /// Export this ResxData to an .xlsx file
         /// </summary>
-        /// <param name="fileName">Path to write .xlsx file to</param>
-        public void ToXls(string fileName)
+        /// <param name="outputPath">Path to write .xlsx file to</param>
+        public void ToXls(string outputPath)
         {
             Excel.Application app = new Excel.Application();
             Excel.Workbook wb = app.Workbooks.Add(Excel.XlWBATemplate.xlWBATWorksheet);
             Excel.Sheets sheets = wb.Worksheets;
-            var cultures = this.GetCultures();
+            var cultures = this.exportCultures.Select(c => c.Name).ToList();
             int sheetIndex = 1;
 
             var firstSheet = app.ActiveSheet as Excel.Worksheet;
@@ -203,20 +218,20 @@ namespace Resx2Xls
                 sheet.Cells[ExcelHeaderRow, ExcelCommentColumn] = "Comment";
                 sheet.Cells[ExcelHeaderRow, ExcelValueColumn] = "Value";
                 int index = ExcelCultureColumn;
-                foreach (string cult in cultures)
+                foreach (var culture in this.exportCultures)
                 {
-                    CultureInfo ci = new CultureInfo(cult);
-                    sheet.Cells[ExcelHeaderRow, index] = ci.DisplayName;
-                    sheet.Cells[ExcelMetadataRow, index] = ci.Name;
+                    sheet.Cells[ExcelHeaderRow, index] = culture.DisplayName;
+                    sheet.Cells[ExcelMetadataRow, index] = culture.Name;
                     index++;
                 }
 
                 // make header bold and metadata italic
-                var metadatarow = (sheet.Rows[ExcelMetadataRow, Type.Missing] as Excel.Range);
+                var metadatarow = sheet.Rows[ExcelMetadataRow, Type.Missing] as Excel.Range;
                 metadatarow.Font.Italic = true;
                 metadatarow.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.White);
                 metadatarow.Locked = true;
-                var headerrow = (sheet.Rows[ExcelHeaderRow, Type.Missing] as Excel.Range);
+                metadatarow.Hidden = true;
+                var headerrow = sheet.Rows[ExcelHeaderRow, Type.Missing] as Excel.Range;
                 headerrow.Font.Bold = true;
                 headerrow.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.White);
                 headerrow.Locked = true;
@@ -231,7 +246,7 @@ namespace Resx2Xls
                 foreach (var r in this.PrimaryTranslation.Where(r => r.ResxRow.FileSource == filesource.Value).OrderBy(r => r.Key))
                 {
                     sheet.Cells[row, ExcelKeyColumn] = r.Key;
-                    //sheet.Cells[row, ExcelCommentColumn] = r.Comment;
+                    sheet.Cells[row, ExcelCommentColumn] = r.Comment;
                     sheet.Cells[row, ExcelValueColumn] = r.Value.Replace(@"\r\n", Environment.NewLine);
                     
                     SecondaryTranslationRow[] rows = r.GetResxLocalizedRows();
@@ -267,8 +282,34 @@ namespace Resx2Xls
                 sheet.Cells.get_Range("A1", "Z1").EntireColumn.AutoFit();
                 sheet.Cells.get_Range("A1", "Z1").EntireColumn.VerticalAlignment = Excel.XlVAlign.xlVAlignTop;
 
+                // Set width of value column
                 var valuecolumn = sheet.Columns.get_Item(ExcelValueColumn, Type.Missing) as Excel.Range;
                 valuecolumn.ColumnWidth = 80;
+
+                // Set width of translated columns
+                for (int i = 0; i < cultures.Count; i++)
+                {
+                    var column = sheet.Columns.get_Item(i + ExcelCultureColumn, Type.Missing) as Excel.Range;
+                    column.ColumnWidth = 60;
+                    Marshal.ReleaseComObject(column);
+                }
+
+                // hide key column
+                if (Properties.Settings.Default.HideKeys)
+                {
+                    var column = sheet.Columns.get_Item(ExcelKeyColumn, Type.Missing) as Excel.Range;
+                    column.Hidden = true;
+                    Marshal.ReleaseComObject(column);
+                }
+
+                // hide comment column
+                if (Properties.Settings.Default.HideComments)
+                {
+                    var column = sheet.Columns.get_Item(ExcelCommentColumn, Type.Missing) as Excel.Range;
+                    //column.Hidden = true;
+                    column.ColumnWidth = 0;
+                    Marshal.ReleaseComObject(column);
+                }
 
                 sheet.Protect("", Type.Missing, true, Type.Missing, Type.Missing, Type.Missing, true,
                     Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing,
@@ -300,18 +341,16 @@ namespace Resx2Xls
                 Type.Missing,
                 Type.Missing,
                 Type.Missing);
-            File.Delete(fileName);
+            File.Delete(outputPath);
 
             ExcelQuit(app, wb);
 
             // Move file otherwise handle is still used by excel
-            File.Move(tmpFile, fileName);
+            File.Move(tmpFile, outputPath);
 
             if (!string.IsNullOrEmpty(this.ReadResxReport))
             {
-                TextWriter tw = new StreamWriter(fileName + ".log", false);
-                tw.Write(this.ReadResxReport);
-                tw.Close();
+                File.WriteAllText(outputPath + ".log", this.ReadResxReport);
             }
         }
 
@@ -360,23 +399,6 @@ namespace Resx2Xls
         }
 
         /// <summary>
-        /// Add a backslash to a path if not present
-        /// </summary>
-        /// <param name="path">path to add backslash to</param>
-        /// <returns>path with backslash</returns>
-        internal static string AddBS(string path)
-        {
-            if (path.Trim().EndsWith("\\"))
-            {
-                return path.Trim();
-            }
-            else
-            {
-                return path.Trim() + "\\";
-            }
-        }
-
-        /// <summary>
         /// Close Excel workbook, quit excel and wait until finished
         /// </summary>
         /// <param name="app">Excel handle to quit</param>
@@ -407,137 +429,62 @@ namespace Resx2Xls
         }
 
         /// <summary>
-        /// Returns true if the .resx file at path is a culture specific resource file
-        /// </summary>
-        /// <param name="path">path of a .resx file</param>
-        /// <returns>true if resource file is culture specific</returns>
-        private static bool ResxIsCultureSpecific(string path)
-        {
-            FileInfo fi = new FileInfo(path);
-            string fname = StripFileExtension(fi.Name);
-
-            string cult = String.Empty;
-            if (fname.IndexOf(".") != -1)
-            {
-                cult = fname.Substring(fname.LastIndexOf('.') + 1);
-            }
-
-            if (cult == String.Empty)
-            {
-                return false;
-            }
-
-            try
-            {
-                System.Globalization.CultureInfo ci = new System.Globalization.CultureInfo(cult);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Returns a filepath without the extension
-        /// </summary>
-        /// <param name="filepath">path of a file</param>
-        /// <returns>path of a file without extension</returns>
-        private static string StripFileExtension(string filepath)
-        {
-            var fileinfo = new FileInfo(filepath.Trim());
-            return fileinfo.FullName.Substring(0, fileinfo.FullName.Length - fileinfo.Extension.Length);
-        }
-
-        /// <summary>
-        /// Returns a list of cultures present in this ResxData
-        /// </summary>
-        /// <returns>List of cultures</returns>
-        private List<string> GetCultures()
-        {
-            var result = new List<string>();
-            if (this.SecondaryTranslation.Rows.Count > 0)
-            {
-                foreach (SecondaryTranslationRow r in this.SecondaryTranslation.Rows)
-                {
-                    if (!String.IsNullOrEmpty(r.Culture) && !result.Contains(r.Culture))
-                    {
-                        result.Add(r.Culture);
-                    }
-                }
-            }
-
-            return result;
-        }
-
-        private string ReadResxReport = string.Empty;
-
-        /// <summary>
         /// Read a specific .resx file
         /// </summary>
-        /// <param name="fileName">resource file to import</param>
+        /// <param name="primaryResx">resource file to import</param>
         /// <param name="projectRoot">root of project used to calculate relative path</param>
         /// <param name="useFolderNamespacePrefix">use folder namespace prefix</param>
         private void ReadResx(
-            string fileName,
+            Resx primaryResx,
             string projectRoot,
             bool purge,
             bool useFolderNamespacePrefix)
         {
-            FileInfo fileInfo = new FileInfo(fileName);
-            string fileRelativePath = fileInfo.FullName.Remove(0, AddBS(projectRoot).Length);
-
             // Create resx reader for primary language
-            var primaryResx = Resx.Read(fileName)
-                                  .Where(k => this.ValidateKey(k.Key))
-                                  .Where(k => !string.IsNullOrEmpty(k.Value));
+            var primaryEntries = primaryResx.Read()
+                                      .Where(k => this.ValidateKey(k.Key))
+                                      .Where(k => !string.IsNullOrEmpty(k.Value));
 
-            if (primaryResx.Count() > 0)
+            if (primaryEntries.Count() > 0)
             {
                 // Create translation source entry for resx file
                 TranslationSourceRow resxrow = this.TranslationSource.NewTranslationSourceRow();
-                resxrow.FileSource = fileRelativePath;
+                resxrow.FileSource = primaryResx.GetRelativePath(projectRoot);
                 this.TranslationSource.AddTranslationSourceRow(resxrow);
                 
-                // Create resx readers for all requested cultures
-                var secondaryResxs = new Dictionary<string, IEnumerable<ResxItem>>();
-                var strippedfileName = StripFileExtension(fileName);
-                foreach (string culture in cultureList)
-                {
-                    var culturefile = strippedfileName + "." + culture + ".resx";
-                    if (new FileInfo(culturefile).Exists)
-                    {
-                        var rows = Resx.Read(culturefile)
-                                       .Where(k => this.ValidateKey(k.Key))
-                                       .Where(k => !string.IsNullOrEmpty(k.Value));
-                        secondaryResxs.Add(culture, rows);
-                    }
-                }
-
                 // Iterate over all entries in resource file fileName
-                foreach (ResxItem resxitem in primaryResx)
+                foreach (ResxItem resxitem in primaryEntries)
                 {
                     var resxkey = this.AddResxKey(resxrow, resxitem.Key, resxitem.Value, resxitem.Comment);
                 }
 
-                foreach (var kvp in secondaryResxs)
+                // Create resx readers for all requested cultures
+                var secondaryResxs = new Dictionary<string, IEnumerable<ResxItem>>();
+                foreach (CultureInfo culture in exportCultures)
                 {
-                    string culture = kvp.Key;
-                    IEnumerable<ResxItem> entries = kvp.Value;
-                    foreach (ResxItem resxitem in entries)
+                    var path = string.Format("{0}.{1}.resx", primaryResx.PathWithoutExtension, culture.Name);
+                    if (File.Exists(path))
                     {
-                        PrimaryTranslationRow row = this.PrimaryTranslation.Where(p => p.TranslationSource == resxrow.Id)
-                                                                           .FirstOrDefault(r => r.Key == resxitem.Key);
+                        var resx = new Resx(path);
+                        var entries = resx.Read()
+                                        .Where(k => this.ValidateKey(k.Key))
+                                        .Where(k => !string.IsNullOrEmpty(k.Value));
                         
-                        if (row == null && !purge)
+                        foreach (ResxItem resxitem in entries)
                         {
-                            row = this.AddResxKey(resxrow, resxitem.Key, "", "does not exist in primary language");
-                            row.Implicit = true;
-                        }
+                            var row = this.PrimaryTranslation.Where(p => p.TranslationSource == resxrow.Id)
+                                                             .FirstOrDefault(r => r.Key == resxitem.Key);
 
-                        if(row != null)
-                        {
-                            this.AddSecondaryKey(row, culture, resxitem.Value);
+                            if (row == null && !purge)
+                            {
+                                row = this.AddResxKey(resxrow, resxitem.Key, "", "does not exist in primary language");
+                                row.Implicit = true;
+                            }
+
+                            if (row != null)
+                            {
+                                this.AddSecondaryKey(row, culture.Name, resxitem.Value);
+                            }
                         }
                     }
                 }
@@ -547,8 +494,11 @@ namespace Resx2Xls
                                                           .Where(p => p.GetResxLocalizedRows().Count() == 0);
                 if (untranslated.Count() > 0)
                 {
-                    string missingReport = "Missing translations from " + fileRelativePath + ":" + Environment.NewLine;
-                    missingReport += string.Join(", ", untranslated.Select(u => u.Key).ToArray());
+                    string missingReport = string.Format(
+                        "Missing translations from {0}:{1}{2}",
+                        primaryResx.GetRelativePath(projectRoot),
+                        Environment.NewLine, 
+                        string.Join(", ", untranslated.Select(u => u.Key).ToArray()));
                     this.ReadResxReport += missingReport + Environment.NewLine + Environment.NewLine;
                 }
             }
@@ -564,6 +514,9 @@ namespace Resx2Xls
             return !excludeList.Any(e => key.EndsWith(e));
         }
 
+        /// <summary>
+        /// Adds values for the primary language
+        /// </summary>
         private PrimaryTranslationRow AddResxKey(TranslationSourceRow row, string key, string value, string comment)
         {
             PrimaryTranslationRow primary = this.PrimaryTranslation.NewPrimaryTranslationRow();
@@ -575,6 +528,10 @@ namespace Resx2Xls
             return primary;
         }
 
+        /// <summary>
+        /// Adds values for a secondary language
+        /// </summary>
+        /// <param name="culture">culture of the secondary language</param>
         private SecondaryTranslationRow AddSecondaryKey(PrimaryTranslationRow primary, string culture, string value)
         {
             SecondaryTranslationRow secondary = this.SecondaryTranslation.NewSecondaryTranslationRow();

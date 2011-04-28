@@ -1,7 +1,7 @@
-
 namespace Resx2Xls
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
     using System.Windows.Forms;
@@ -31,6 +31,8 @@ namespace Resx2Xls
             this.textBoxFolder.Text = Properties.Settings.Default.FolderPath;
             this.textBoxExclude.Text = Properties.Settings.Default.ExcludeList;
             this.checkBoxFolderNaming.Checked = Properties.Settings.Default.FolderNamespaceNaming;
+            this.hideCommentColumnCheckbox.Checked = Properties.Settings.Default.HideComments;
+            this.hideKeyColumnCheckbox.Checked = Properties.Settings.Default.HideKeys;
             
             FillCultures();
 
@@ -78,19 +80,17 @@ namespace Resx2Xls
             string path,
             bool deepSearch,
             bool purge,
-            string xslFile,
-            string[] cultures,
-            string[] excludeList,
+            string outputPath,
+            List<CultureInfo> cultures,
+            List<string> excludeFilter,
             bool useFolderNamespacePrefix)
         {
-            if (!System.IO.Directory.Exists(path))
+            if (!Directory.Exists(path))
                 return;
 
-            ResxData rd = ResxData.FromResx(path, deepSearch, purge, cultures, excludeList, useFolderNamespacePrefix);
-
-            rd.ToXls(xslFile);
-
-            ShowXls(xslFile);
+            var resxdata = ResxData.FromResx(path, deepSearch, purge, cultures, excludeFilter, useFolderNamespacePrefix);
+            resxdata.ToXls(outputPath);
+            this.ShowXls(outputPath);
         }
 
         private void XlsToResx(string xlsFile)
@@ -213,13 +213,13 @@ namespace Resx2Xls
             Properties.Settings.Default.FolderPath = this.textBoxFolder.Text;
         }
 
-        public void ShowXls(string xslFilePath)
+        public void ShowXls(string path)
         {
-            if (!System.IO.File.Exists(xslFilePath))
+            if (!File.Exists(path))
                 return;
 
             Excel.Application app = new Excel.Application();
-            Excel.Workbook wb = app.Workbooks.Open(xslFilePath,
+            Excel.Workbook wb = app.Workbooks.Open(path,
                                                    0, false, 5, "", "", false, Excel.XlPlatform.xlWindows, "",
                                                    true, false, 0, true, false, false);
 
@@ -230,14 +230,16 @@ namespace Resx2Xls
         {
             Cursor = Cursors.WaitCursor;
 
-            string[] excludeList = this.textBoxExclude.Text.Split(';');
+            // Set settings here, no need to pass along
+            Properties.Settings.Default.HideKeys = hideKeyColumnCheckbox.Checked;
+            Properties.Settings.Default.HideComments = hideCommentColumnCheckbox.Checked;
 
-            string[] cultures = null;
+            var excludeFilter = new List<string>(this.textBoxExclude.Text.Split(';'));
 
-            cultures = new string[this.listBoxSelected.Items.Count];
+            var cultures = new List<CultureInfo>();
             for (int i = 0; i < this.listBoxSelected.Items.Count; i++)
             {
-                cultures[i] = ((CultureInfo)this.listBoxSelected.Items[i]).Name;
+                cultures.Add((CultureInfo)this.listBoxSelected.Items[i]);
             }
 
             switch (_operation)
@@ -258,14 +260,14 @@ namespace Resx2Xls
                     if (this.saveFileDialogXls.ShowDialog() == DialogResult.OK)
                     {
                         Application.DoEvents();
-                        string path = this.saveFileDialogXls.FileName;
+                        string outputPath = this.saveFileDialogXls.FileName;
                         ResxToXls(
                             this.textBoxFolder.Text,
                             this.checkBoxSubFolders.Checked,
                             this.purgeTranslation_CheckBox.Checked,
-                            path,
+                            outputPath,
                             cultures,
-                            excludeList,
+                            excludeFilter,
                             this.checkBoxFolderNaming.Checked);
                         MessageBox.Show(
                             "Excel Document created.",
