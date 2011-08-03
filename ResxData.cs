@@ -177,7 +177,7 @@
         /// Export this ResxData to an .xlsx file
         /// </summary>
         /// <param name="outputPath">Path to write .xlsx file to</param>
-        public void ToXls(string outputPath)
+        public void ToXls(string outputPath, string screenshotPath)
         {
             Excel.Application app = new Excel.Application();
             Excel.Workbook wb = app.Workbooks.Add(Excel.XlWBATemplate.xlWBATWorksheet);
@@ -282,6 +282,25 @@
                 sheet.Cells.get_Range("A1", "Z1").EntireColumn.AutoFit();
                 sheet.Cells.get_Range("A1", "Z1").EntireColumn.VerticalAlignment = Excel.XlVAlign.xlVAlignTop;
 
+                // Insert screenshots
+                var screenshotDir = Path.Combine(screenshotPath, filesource.Key);
+                if (Directory.Exists(screenshotDir))
+                {
+                    var lastcell = sheet.Cells[row, 1] as Excel.Range;
+                    var lastCellTopPoints = (Double)(lastcell.Top);
+                    var offset = (float)lastCellTopPoints + 20;
+                    Marshal.ReleaseComObject(lastcell);
+                    foreach (var file in Directory.GetFiles(screenshotDir))
+                    {
+                        var size = System.Drawing.Image.FromFile(file).Size;
+                        sheet.Shapes.AddPicture(file,
+                            Microsoft.Office.Core.MsoTriState.msoFalse,
+                            Microsoft.Office.Core.MsoTriState.msoCTrue,
+                            10, offset, size.Width / 2, size.Height / 2);
+                        offset += size.Height / 2 + 10;
+                    }
+                }
+ 
                 // Set width of value column
                 var valuecolumn = sheet.Columns.get_Item(ExcelValueColumn, Type.Missing) as Excel.Range;
                 valuecolumn.ColumnWidth = 80;

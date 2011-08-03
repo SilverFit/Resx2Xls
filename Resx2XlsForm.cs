@@ -29,11 +29,12 @@ namespace Resx2Xls
             InitializeComponent();
 
             this.textBoxFolder.Text = Properties.Settings.Default.FolderPath;
+            this.textBoxScreenshots.Text = Properties.Settings.Default.ScreenshotPath;
             this.textBoxExclude.Text = Properties.Settings.Default.ExcludeList;
             this.checkBoxFolderNaming.Checked = Properties.Settings.Default.FolderNamespaceNaming;
             this.hideCommentColumnCheckbox.Checked = Properties.Settings.Default.HideComments;
             this.hideKeyColumnCheckbox.Checked = Properties.Settings.Default.HideKeys;
-            
+
             FillCultures();
 
             this.radioButtonCreateXls.CheckedChanged += new EventHandler(radioButton_CheckedChanged);
@@ -78,6 +79,7 @@ namespace Resx2Xls
 
         public void ResxToXls(
             string path,
+            string screenshotPath,
             bool deepSearch,
             bool purge,
             string outputPath,
@@ -89,7 +91,7 @@ namespace Resx2Xls
                 return;
 
             var resxdata = ResxData.FromResx(path, deepSearch, purge, cultures, excludeFilter, useFolderNamespacePrefix);
-            resxdata.ToXls(outputPath);
+            resxdata.ToXls(outputPath, screenshotPath);
             this.ShowXls(outputPath);
         }
 
@@ -168,6 +170,14 @@ namespace Resx2Xls
             }
         }
 
+        private void browseButtonScreenshots_Click(object sender, EventArgs e)
+        {
+            if (this.screenshotFolderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                this.textBoxScreenshots.Text = this.screenshotFolderBrowserDialog.SelectedPath;
+            }
+        }
+
         private void buttonAdd_Click(object sender, EventArgs e)
         {
             AddCultures();
@@ -211,6 +221,11 @@ namespace Resx2Xls
         private void textBoxFolder_TextChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.FolderPath = this.textBoxFolder.Text;
+        }
+
+        private void textBoxScreenshots_TextChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.ScreenshotPath = this.textBoxScreenshots.Text;
         }
 
         public void ShowXls(string path)
@@ -263,6 +278,7 @@ namespace Resx2Xls
                         string outputPath = this.saveFileDialogXls.FileName;
                         ResxToXls(
                             this.textBoxFolder.Text,
+                            this.textBoxScreenshots.Text,
                             this.checkBoxSubFolders.Checked,
                             this.purgeTranslation_CheckBox.Checked,
                             outputPath,

@@ -37,6 +37,9 @@ namespace Resx2Xls
             this.radioButtonBuildXls = new System.Windows.Forms.RadioButton();
             this.radioButtonCreateXls = new System.Windows.Forms.RadioButton();
             this.intermediateStepProject = new WizardBase.IntermediateStep();
+            this.label7 = new System.Windows.Forms.Label();
+            this.textBoxScreenshots = new System.Windows.Forms.TextBox();
+            this.browseButtonScreenshots = new System.Windows.Forms.Button();
             this.labelFolder = new System.Windows.Forms.Label();
             this.textBoxFolder = new System.Windows.Forms.TextBox();
             this.checkBoxSubFolders = new System.Windows.Forms.CheckBox();
@@ -50,6 +53,8 @@ namespace Resx2Xls
             this.listBoxCultures = new System.Windows.Forms.ListBox();
             this.listBoxSelected = new System.Windows.Forms.ListBox();
             this.intermediateStepOptions = new WizardBase.IntermediateStep();
+            this.hideKeyColumnCheckbox = new System.Windows.Forms.CheckBox();
+            this.hideCommentColumnCheckbox = new System.Windows.Forms.CheckBox();
             this.purgeTranslation_CheckBox = new System.Windows.Forms.CheckBox();
             this.checkBoxFolderNaming = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -61,8 +66,7 @@ namespace Resx2Xls
             this.finishStep1 = new WizardBase.FinishStep();
             this.label6 = new System.Windows.Forms.Label();
             this.textBoxSummary = new System.Windows.Forms.TextBox();
-            this.hideCommentColumnCheckbox = new System.Windows.Forms.CheckBox();
-            this.hideKeyColumnCheckbox = new System.Windows.Forms.CheckBox();
+            this.screenshotFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.startStep1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.intermediateStepProject.SuspendLayout();
@@ -102,10 +106,10 @@ namespace Resx2Xls
             this.wizardControl1.WizardSteps.Add(this.intermediateStepOptions);
             this.wizardControl1.WizardSteps.Add(this.intermediateStepXlsSelect);
             this.wizardControl1.WizardSteps.Add(this.finishStep1);
-            this.wizardControl1.FinishButtonClick += new System.EventHandler(this.wizardControl1_FinishButtonClick);
-            this.wizardControl1.NextButtonClick += new WizardBase.WizardNextButtonClickEventHandler(this.wizardControl1_NextButtonClick);
             this.wizardControl1.BackButtonClick += new WizardBase.WizardClickEventHandler(this.wizardControl1_BackButtonClick);
             this.wizardControl1.CancelButtonClick += new System.EventHandler(this.wizardControl1_CancelButtonClick);
+            this.wizardControl1.FinishButtonClick += new System.EventHandler(this.wizardControl1_FinishButtonClick);
+            this.wizardControl1.NextButtonClick += new WizardBase.WizardNextButtonClickEventHandler(this.wizardControl1_NextButtonClick);
             // 
             // startStep1
             // 
@@ -154,6 +158,9 @@ namespace Resx2Xls
             // intermediateStepProject
             // 
             this.intermediateStepProject.BindingImage = global::Resx2Xls.Properties.Resources.topbar;
+            this.intermediateStepProject.Controls.Add(this.label7);
+            this.intermediateStepProject.Controls.Add(this.textBoxScreenshots);
+            this.intermediateStepProject.Controls.Add(this.browseButtonScreenshots);
             this.intermediateStepProject.Controls.Add(this.labelFolder);
             this.intermediateStepProject.Controls.Add(this.textBoxFolder);
             this.intermediateStepProject.Controls.Add(this.checkBoxSubFolders);
@@ -164,6 +171,34 @@ namespace Resx2Xls
             this.intermediateStepProject.SubtitleFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.intermediateStepProject.Title = "Select your .Net Project.";
             this.intermediateStepProject.TitleFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.label7.Location = new System.Drawing.Point(20, 230);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(104, 13);
+            this.label7.TabIndex = 14;
+            this.label7.Text = "Screenshot directory";
+            // 
+            // textBoxScreenshots
+            // 
+            this.textBoxScreenshots.Location = new System.Drawing.Point(23, 246);
+            this.textBoxScreenshots.Name = "textBoxScreenshots";
+            this.textBoxScreenshots.Size = new System.Drawing.Size(438, 20);
+            this.textBoxScreenshots.TabIndex = 13;
+            this.textBoxScreenshots.TextChanged += new System.EventHandler(this.textBoxScreenshots_TextChanged);
+            // 
+            // browseButtonScreenshots
+            // 
+            this.browseButtonScreenshots.Location = new System.Drawing.Point(467, 246);
+            this.browseButtonScreenshots.Name = "browseButtonScreenshots";
+            this.browseButtonScreenshots.Size = new System.Drawing.Size(75, 23);
+            this.browseButtonScreenshots.TabIndex = 15;
+            this.browseButtonScreenshots.Text = "Browse";
+            this.browseButtonScreenshots.UseVisualStyleBackColor = true;
+            this.browseButtonScreenshots.Click += new System.EventHandler(this.browseButtonScreenshots_Click);
             // 
             // labelFolder
             // 
@@ -308,6 +343,28 @@ namespace Resx2Xls
             this.intermediateStepOptions.Title = "Options.";
             this.intermediateStepOptions.TitleFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             // 
+            // hideKeyColumnCheckbox
+            // 
+            this.hideKeyColumnCheckbox.AutoSize = true;
+            this.hideKeyColumnCheckbox.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.hideKeyColumnCheckbox.Location = new System.Drawing.Point(247, 149);
+            this.hideKeyColumnCheckbox.Name = "hideKeyColumnCheckbox";
+            this.hideKeyColumnCheckbox.Size = new System.Drawing.Size(105, 17);
+            this.hideKeyColumnCheckbox.TabIndex = 17;
+            this.hideKeyColumnCheckbox.Text = "Hide key column";
+            this.hideKeyColumnCheckbox.UseVisualStyleBackColor = true;
+            // 
+            // hideCommentColumnCheckbox
+            // 
+            this.hideCommentColumnCheckbox.AutoSize = true;
+            this.hideCommentColumnCheckbox.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.hideCommentColumnCheckbox.Location = new System.Drawing.Point(247, 172);
+            this.hideCommentColumnCheckbox.Name = "hideCommentColumnCheckbox";
+            this.hideCommentColumnCheckbox.Size = new System.Drawing.Size(131, 17);
+            this.hideCommentColumnCheckbox.TabIndex = 16;
+            this.hideCommentColumnCheckbox.Text = "Hide comment column";
+            this.hideCommentColumnCheckbox.UseVisualStyleBackColor = true;
+            // 
             // purgeTranslation_CheckBox
             // 
             this.purgeTranslation_CheckBox.AutoSize = true;
@@ -417,28 +474,6 @@ namespace Resx2Xls
             this.textBoxSummary.Size = new System.Drawing.Size(646, 255);
             this.textBoxSummary.TabIndex = 0;
             // 
-            // hideCommentColumnCheckbox
-            // 
-            this.hideCommentColumnCheckbox.AutoSize = true;
-            this.hideCommentColumnCheckbox.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.hideCommentColumnCheckbox.Location = new System.Drawing.Point(247, 172);
-            this.hideCommentColumnCheckbox.Name = "hideCommentColumnCheckbox";
-            this.hideCommentColumnCheckbox.Size = new System.Drawing.Size(131, 17);
-            this.hideCommentColumnCheckbox.TabIndex = 16;
-            this.hideCommentColumnCheckbox.Text = "Hide comment column";
-            this.hideCommentColumnCheckbox.UseVisualStyleBackColor = true;
-            // 
-            // hideKeyColumnCheckbox
-            // 
-            this.hideKeyColumnCheckbox.AutoSize = true;
-            this.hideKeyColumnCheckbox.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.hideKeyColumnCheckbox.Location = new System.Drawing.Point(247, 149);
-            this.hideKeyColumnCheckbox.Name = "hideKeyColumnCheckbox";
-            this.hideKeyColumnCheckbox.Size = new System.Drawing.Size(105, 17);
-            this.hideKeyColumnCheckbox.TabIndex = 17;
-            this.hideKeyColumnCheckbox.Text = "Hide key column";
-            this.hideKeyColumnCheckbox.UseVisualStyleBackColor = true;
-            // 
             // Resx2XlsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -502,6 +537,10 @@ namespace Resx2Xls
         private System.Windows.Forms.CheckBox purgeTranslation_CheckBox;
         private System.Windows.Forms.CheckBox hideKeyColumnCheckbox;
         private System.Windows.Forms.CheckBox hideCommentColumnCheckbox;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox textBoxScreenshots;
+        private System.Windows.Forms.Button browseButtonScreenshots;
+        private System.Windows.Forms.FolderBrowserDialog screenshotFolderBrowserDialog;
     }
 }
 
