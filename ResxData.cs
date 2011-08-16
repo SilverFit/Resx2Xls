@@ -283,6 +283,11 @@
                 sheet.Cells.get_Range("A1", "Z1").EntireColumn.VerticalAlignment = Excel.XlVAlign.xlVAlignTop;
 
                 // Insert screenshots
+                List<string> validExtensions = new List<string>();
+                validExtensions.Add(".png");
+                validExtensions.Add(".jpg");
+                validExtensions.Add(".jpeg");
+
                 var screenshotDir = Path.Combine(screenshotPath, filesource.Key);
                 if (Directory.Exists(screenshotDir))
                 {
@@ -290,7 +295,8 @@
                     var lastCellTopPoints = (Double)(lastcell.Top);
                     var offset = (float)lastCellTopPoints + 20;
                     Marshal.ReleaseComObject(lastcell);
-                    foreach (var file in Directory.GetFiles(screenshotDir))
+                    var screenshotFiles = Directory.GetFiles(screenshotDir).Where(f => validExtensions.Contains(Path.GetExtension(f)));
+                    foreach (var file in screenshotFiles)
                     {
                         var size = System.Drawing.Image.FromFile(file).Size;
                         sheet.Shapes.AddPicture(file,
