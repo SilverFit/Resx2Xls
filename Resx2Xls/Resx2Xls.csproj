@@ -73,8 +73,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="WizardBase, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\WizardBase.dll</HintPath>
+      <HintPath>..\WizardBase.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
