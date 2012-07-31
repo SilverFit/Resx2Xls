@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resx2Xls", "Resx2Xls.csproj", "{9A301D6B-D2B5-4C16-8F46-BF7892767FDB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resx2Xls", "Resx2Xls\Resx2Xls.csproj", "{9A301D6B-D2B5-4C16-8F46-BF7892767FDB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
