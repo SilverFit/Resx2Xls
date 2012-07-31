@@ -203,7 +203,7 @@
             foreach (var filesource in filesourcesdict.OrderBy(kvp => kvp.Key))
             {
                 // add sheet
-                var sheet = sheets.Add(sheets[sheetIndex], Type.Missing, Type.Missing, Type.Missing) as Excel.Worksheet;
+                var sheet = sheets.Add(Before: sheets[sheetIndex]) as Excel.Worksheet;
                 sheet.Name = filesource.Key;
                 sheetIndex++;
                 Trace.WriteLine("Created sheet " + filesource.Key);
@@ -226,12 +226,12 @@
                 }
 
                 // make header bold and metadata italic
-                var metadatarow = sheet.Rows[ExcelMetadataRow, Type.Missing] as Excel.Range;
+                var metadatarow = sheet.Rows[RowIndex: ExcelMetadataRow] as Excel.Range;
                 metadatarow.Font.Italic = true;
                 metadatarow.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.White);
                 metadatarow.Locked = true;
                 metadatarow.Hidden = true;
-                var headerrow = sheet.Rows[ExcelHeaderRow, Type.Missing] as Excel.Range;
+                var headerrow = sheet.Rows[RowIndex: ExcelHeaderRow] as Excel.Range;
                 headerrow.Font.Bold = true;
                 headerrow.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.White);
                 headerrow.Locked = true;
@@ -308,13 +308,13 @@
                 }
  
                 // Set width of value column
-                var valuecolumn = sheet.Columns.get_Item(ExcelValueColumn, Type.Missing) as Excel.Range;
+                var valuecolumn = sheet.Columns.get_Item(ExcelValueColumn) as Excel.Range;
                 valuecolumn.ColumnWidth = 80;
 
                 // Set width of translated columns
                 for (int i = 0; i < cultures.Count; i++)
                 {
-                    var column = sheet.Columns.get_Item(i + ExcelCultureColumn, Type.Missing) as Excel.Range;
+                    var column = sheet.Columns.get_Item(i + ExcelCultureColumn) as Excel.Range;
                     column.ColumnWidth = 60;
                     Marshal.ReleaseComObject(column);
                 }
@@ -322,7 +322,7 @@
                 // hide key column
                 if (Properties.Settings.Default.HideKeys)
                 {
-                    var column = sheet.Columns.get_Item(ExcelKeyColumn, Type.Missing) as Excel.Range;
+                    var column = sheet.Columns.get_Item(ExcelKeyColumn) as Excel.Range;
                     column.Hidden = true;
                     Marshal.ReleaseComObject(column);
                 }
@@ -330,15 +330,13 @@
                 // hide comment column
                 if (Properties.Settings.Default.HideComments)
                 {
-                    var column = sheet.Columns.get_Item(ExcelCommentColumn, Type.Missing) as Excel.Range;
+                    var column = sheet.Columns.get_Item(ExcelCommentColumn) as Excel.Range;
                     //column.Hidden = true;
                     column.ColumnWidth = 0;
                     Marshal.ReleaseComObject(column);
                 }
 
-                sheet.Protect("", Type.Missing, true, Type.Missing, Type.Missing, Type.Missing, true,
-                    Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing,
-                    Type.Missing, Type.Missing);
+                sheet.Protect(Password: "", Contents: true, AllowFormattingColumns: true);
 
                 Marshal.ReleaseComObject(metadatarow);
                 Marshal.ReleaseComObject(headerrow);
@@ -353,19 +351,7 @@
             // Save the Workbook and force overwriting by rename trick
             string tmpFile = Path.GetTempFileName();
             File.Delete(tmpFile);
-            wb.SaveAs(
-                tmpFile,
-                Type.Missing,
-                Type.Missing,
-                Type.Missing,
-                Type.Missing,
-                Type.Missing,
-                Excel.XlSaveAsAccessMode.xlNoChange,
-                Type.Missing,
-                Type.Missing,
-                Type.Missing,
-                Type.Missing,
-                Type.Missing);
+            wb.SaveAs(Filename: tmpFile, AccessMode: Excel.XlSaveAsAccessMode.xlNoChange);
             File.Delete(outputPath);
 
             ExcelQuit(app, wb);
@@ -430,7 +416,7 @@
         /// <param name="wb">Excel workbook to close</param>
         private static void ExcelQuit(Excel.Application app, Excel.Workbook wb)
         {
-            wb.Close(false, Type.Missing, Type.Missing);
+            wb.Close(SaveChanges: false);
             app.Quit();
             while (Marshal.ReleaseComObject(app) != 0)
             {
