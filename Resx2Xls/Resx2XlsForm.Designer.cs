@@ -79,12 +79,12 @@ namespace Resx2Xls
             // openFileDialogXls
             // 
             this.openFileDialogXls.DefaultExt = "xlsx";
-            this.openFileDialogXls.Filter = "*.xlsx|*.xlsx";
+            this.openFileDialogXls.Filter = "*.xlsx|*.xls";
             // 
             // saveFileDialogXls
             // 
             this.saveFileDialogXls.DefaultExt = "xlsx";
-            this.saveFileDialogXls.Filter = "*.xlsx|*.xlsx";
+            this.saveFileDialogXls.Filter = "*.xlsx|*.xls";
             // 
             // wizardControl1
             // 
