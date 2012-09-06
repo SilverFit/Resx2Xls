@@ -76,7 +76,12 @@
         public static ResxData FromXls(string xlsFile)
         {
             Excel.Application app = new Excel.Application();
-            Excel.Workbook wb = app.Workbooks.Open(xlsFile, 0, false, 5, string.Empty, string.Empty, false, Excel.XlPlatform.xlWindows, string.Empty, true, false, 0, true, false, false);
+            Excel.Workbook wb = app.Workbooks.Open(
+                    Filename : xlsFile,
+                    Format : 5,
+                    Origin : Excel.XlPlatform.xlWindows,
+                    Editable : true,
+                    AddToMru : true);
             Excel.Sheets sheets = wb.Worksheets;
 
             ResxData rd = new ResxData();
@@ -177,7 +182,7 @@
         /// Export this ResxData to an .xlsx file
         /// </summary>
         /// <param name="outputPath">Path to write .xlsx file to</param>
-        public void ToXls(string outputPath, string screenshotPath)
+        public void ToXls(string outputPath, string screenshotPath, Action<string> addSummaryDelegate)
         {
             Excel.Application app = new Excel.Application();
             Excel.Workbook wb = app.Workbooks.Add(Excel.XlWBATemplate.xlWBATWorksheet);
@@ -206,7 +211,7 @@
                 var sheet = sheets.Add(Before: sheets[sheetIndex]) as Excel.Worksheet;
                 sheet.Name = filesource.Key;
                 sheetIndex++;
-                Trace.WriteLine("Created sheet " + filesource.Key);
+                addSummaryDelegate("Created sheet " + filesource.Key);
 
                 // add filesource metadata
                 Excel.Range filesourcecell = sheet.Cells[ExcelMetadataRow, ExcelFilesourceColumn] as Excel.Range;
@@ -369,7 +374,7 @@
         /// Export to resx files
         /// </summary>
         /// <param name="path">path to place resx files</param>
-        public void ToResx(string path)
+        public void ToResx(string path, Action<string> addSummaryDelegate)
         {
             var cultures = this.SecondaryTranslation.Select(rl => rl.Culture)
                                                     .Distinct();
@@ -403,8 +408,9 @@
                         rw.AddResource(new ResXDataNode(entry.PrimaryTranslationRow.Key, value));
                     }
 
-                    Console.WriteLine("Wrote localized resx {0}", fileName);
                     rw.Close();
+
+                    addSummaryDelegate("Wrote localized resx: " + fileName);
                 }
             }
         }

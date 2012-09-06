@@ -4,8 +4,11 @@ namespace Resx2Xls
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Windows.Forms;
     using Excel = Microsoft.Office.Interop.Excel;
+    using AppSettings = Resx2Xls.Properties.Settings;
+    using ResX = Resx2Xls.Properties.Resources;
 
     public partial class Resx2XlsForm : Form
     {
@@ -17,33 +20,25 @@ namespace Resx2Xls
 
         private ResxToXlsOperation _operation;
 
-        string _summary1;
-        string _summary2;
-
         public Resx2XlsForm()
         {
-            CultureInfo ci = new CultureInfo("en-US");
+            CultureInfo ci = CultureInfo.GetCultureInfo("en-US");
             System.Threading.Thread.CurrentThread.CurrentCulture = ci;
             System.Threading.Thread.CurrentThread.CurrentUICulture = ci;
 
             InitializeComponent();
 
-            this.textBoxFolder.Text = Properties.Settings.Default.FolderPath;
-            this.textBoxScreenshots.Text = Properties.Settings.Default.ScreenshotPath;
-            this.textBoxExclude.Text = Properties.Settings.Default.ExcludeList;
-            this.checkBoxFolderNaming.Checked = Properties.Settings.Default.FolderNamespaceNaming;
-            this.hideCommentColumnCheckbox.Checked = Properties.Settings.Default.HideComments;
-            this.hideKeyColumnCheckbox.Checked = Properties.Settings.Default.HideKeys;
+            this.textBoxFolder.Text = AppSettings.Default.FolderPath;
+            this.textBoxScreenshots.Text = AppSettings.Default.ScreenshotPath;
+            this.textBoxExclude.Text = AppSettings.Default.ExcludeList;
+            this.checkBoxFolderNaming.Checked = AppSettings.Default.FolderNamespaceNaming;
+            this.hideCommentColumnCheckbox.Checked = AppSettings.Default.HideComments;
+            this.hideKeyColumnCheckbox.Checked = AppSettings.Default.HideKeys;
 
             FillCultures();
 
             this.radioButtonCreateXls.CheckedChanged += new EventHandler(radioButton_CheckedChanged);
             this.radioButtonBuildXls.CheckedChanged += new EventHandler(radioButton_CheckedChanged);
-
-            _summary1 = "Operation:\r\nCreate a new Excel document ready for localization.";
-            _summary2 = "Operation:\r\nBuild your localized Resource files from a Filled Excel Document.";
-
-            this.textBoxSummary.Text = _summary1;
         }
 
         void radioButton_CheckedChanged(object sender, EventArgs e)
@@ -54,12 +49,10 @@ namespace Resx2Xls
             if (this.radioButtonCreateXls.Checked)
             {
                 _operation = ResxToXlsOperation.Create;
-                this.textBoxSummary.Text = _summary1;
             }
             if (this.radioButtonBuildXls.Checked)
             {
                 _operation = ResxToXlsOperation.Build;
-                this.textBoxSummary.Text = _summary2;
             }
             if (((RadioButton)sender).Checked)
             {
@@ -90,9 +83,22 @@ namespace Resx2Xls
             if (!Directory.Exists(path))
                 return;
 
+            Cursor = Cursors.WaitCursor;
+
+            this.AddSummaryLine();
+            this.AddSummaryLine(ResX.parsing_resx);
             var resxdata = ResxData.FromResx(path, deepSearch, purge, cultures, excludeFilter, useFolderNamespacePrefix);
-            resxdata.ToXls(outputPath, screenshotPath);
+            resxdata.ToXls(outputPath, screenshotPath, this.AddSummaryLine);
             this.ShowXls(outputPath);
+            
+            Cursor = Cursors.Default;
+        }
+
+        private void AddSummaryLine(string text = "")
+        {
+            this.textBoxSummary.Text += text + Environment.NewLine;
+            this.textBoxSummary.SelectionStart = this.textBoxSummary.Text.Length;
+            this.textBoxSummary.ScrollToCaret();
         }
 
         private void XlsToResx(string xlsFile)
@@ -100,30 +106,27 @@ namespace Resx2Xls
             if (!File.Exists(xlsFile))
                 return;
 
+            Cursor = Cursors.WaitCursor;
+
             string path = new FileInfo(xlsFile).DirectoryName;
 
+            this.AddSummaryLine();
+            this.AddSummaryLine(ResX.parsing_excel);
             var rd = ResxData.FromXls(xlsFile);
-            rd.ToResx(path);
+            rd.ToResx(path, this.AddSummaryLine);
+
+            Cursor = Cursors.Default;
         }
 
         private void FillCultures()
         {
-            CultureInfo[] array = CultureInfo.GetCultures(CultureTypes.AllCultures);
-            Array.Sort(array, new CultureInfoComparer());
-            foreach (CultureInfo info in array)
-            {
-                if (info.Equals(CultureInfo.InvariantCulture))
-                {
-                    //this.listBoxCultures.Items.Add(info, "Default (Invariant Language)");
-                }
-                else
-                {
-                    this.listBoxCultures.Items.Add(info);
-                }
-
-            }
-
-            string cList = Properties.Settings.Default.CultureList;
+            var cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures)
+                                      .OrderBy(c => c.EnglishName)
+                                      .ToArray();
+            
+            this.listBoxCultures.Items.AddRange(cultures);
+            
+            string cList = AppSettings.Default.CultureList;
 
             string[] cultureList = cList.Split(';');
 
@@ -159,7 +162,7 @@ namespace Resx2Xls
                 cultures = cultures + info.Name;
             }
 
-            Properties.Settings.Default.CultureList = cultures;
+            AppSettings.Default.CultureList = cultures;
         }
 
         private void buttonBrowse_Click(object sender, EventArgs e)
@@ -207,25 +210,25 @@ namespace Resx2Xls
 
         private void textBoxExclude_TextChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.ExcludeList = this.textBoxExclude.Text;
+            AppSettings.Default.ExcludeList = this.textBoxExclude.Text;
 
         }
 
         private void Resx2XlsForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             SaveCultures();
-            Properties.Settings.Default.FolderNamespaceNaming = this.checkBoxFolderNaming.Checked;
-            Properties.Settings.Default.Save();
+            AppSettings.Default.FolderNamespaceNaming = this.checkBoxFolderNaming.Checked;
+            AppSettings.Default.Save();
         }
 
         private void textBoxFolder_TextChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.FolderPath = this.textBoxFolder.Text;
+            AppSettings.Default.FolderPath = this.textBoxFolder.Text;
         }
 
         private void textBoxScreenshots_TextChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.ScreenshotPath = this.textBoxScreenshots.Text;
+            AppSettings.Default.ScreenshotPath = this.textBoxScreenshots.Text;
         }
 
         public void ShowXls(string path)
@@ -234,20 +237,21 @@ namespace Resx2Xls
                 return;
 
             Excel.Application app = new Excel.Application();
-            Excel.Workbook wb = app.Workbooks.Open(path,
-                                                   0, false, 5, "", "", false, Excel.XlPlatform.xlWindows, "",
-                                                   true, false, 0, true, false, false);
+            Excel.Workbook wb = app.Workbooks.Open(
+                Filename: path,
+                Format: 5,
+                Origin: Excel.XlPlatform.xlWindows, 
+                Editable: true,
+                AddToMru: true);
 
             app.Visible = true;
         }
 
         private void FinishWizard()
         {
-            Cursor = Cursors.WaitCursor;
-
             // Set settings here, no need to pass along
-            Properties.Settings.Default.HideKeys = hideKeyColumnCheckbox.Checked;
-            Properties.Settings.Default.HideComments = hideCommentColumnCheckbox.Checked;
+            AppSettings.Default.HideKeys = hideKeyColumnCheckbox.Checked;
+            AppSettings.Default.HideComments = hideCommentColumnCheckbox.Checked;
 
             var excludeFilter = new List<string>(this.textBoxExclude.Text.Split(';'));
 
@@ -312,8 +316,6 @@ namespace Resx2Xls
                     throw new InvalidOperationException();
             }
 
-            Cursor = Cursors.Default;
-
             this.Close();
         }
 
@@ -356,10 +358,15 @@ namespace Resx2Xls
                     {
                         case ResxToXlsOperation.Create:
                             this.wizardControl1.CurrentStepIndex = 5 - offset;
+                            this.textBoxSummary.Text = ResX.summary_create_excel;
                             break;
                         default:
                             break;
                     }
+                    break;
+
+                case 4:
+                    this.textBoxSummary.Text = ResX.summary_create_resx;
                     break;
             }
         }

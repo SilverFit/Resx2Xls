@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="topbar" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\topbar.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -129,5 +129,19 @@
   </data>
   <data name="finishbar" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\finishbar.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="parsing_excel" xml:space="preserve">
+    <value>Parsing excel file..</value>
+  </data>
+  <data name="parsing_resx" xml:space="preserve">
+    <value>Parsing resx files..</value>
+  </data>
+  <data name="summary_create_excel" xml:space="preserve">
+    <value>Operation:
+Build your localized Resource files from a Filled Excel Document.</value>
+  </data>
+  <data name="summary_create_resx" xml:space="preserve">
+    <value>Operation:
+Build your localized Resource files from a Filled Excel Document.</value>
   </data>
 </root>

@@ -192,6 +192,7 @@ namespace Resx2Xls
             // 
             // browseButtonScreenshots
             // 
+            this.browseButtonScreenshots.ForeColor = System.Drawing.SystemColors.ControlText;
             this.browseButtonScreenshots.Location = new System.Drawing.Point(467, 246);
             this.browseButtonScreenshots.Name = "browseButtonScreenshots";
             this.browseButtonScreenshots.Size = new System.Drawing.Size(75, 23);
@@ -233,6 +234,7 @@ namespace Resx2Xls
             // 
             // buttonBrowse
             // 
+            this.buttonBrowse.ForeColor = System.Drawing.SystemColors.ControlText;
             this.buttonBrowse.Location = new System.Drawing.Point(467, 136);
             this.buttonBrowse.Name = "buttonBrowse";
             this.buttonBrowse.Size = new System.Drawing.Size(75, 23);
@@ -262,7 +264,7 @@ namespace Resx2Xls
             // 
             this.label5.AutoSize = true;
             this.label5.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label5.Location = new System.Drawing.Point(278, 224);
+            this.label5.Location = new System.Drawing.Point(317, 380);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(160, 13);
             this.label5.TabIndex = 10;
@@ -272,7 +274,7 @@ namespace Resx2Xls
             // 
             this.label4.AutoSize = true;
             this.label4.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label4.Location = new System.Drawing.Point(64, 224);
+            this.label4.Location = new System.Drawing.Point(64, 380);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(143, 13);
             this.label4.TabIndex = 9;
@@ -282,7 +284,7 @@ namespace Resx2Xls
             // 
             this.label3.AutoSize = true;
             this.label3.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label3.Location = new System.Drawing.Point(277, 84);
+            this.label3.Location = new System.Drawing.Point(317, 84);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(93, 13);
             this.label3.TabIndex = 8;
@@ -301,9 +303,9 @@ namespace Resx2Xls
             // buttonAdd
             // 
             this.buttonAdd.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.buttonAdd.Location = new System.Drawing.Point(222, 100);
+            this.buttonAdd.Location = new System.Drawing.Point(249, 220);
             this.buttonAdd.Name = "buttonAdd";
-            this.buttonAdd.Size = new System.Drawing.Size(52, 23);
+            this.buttonAdd.Size = new System.Drawing.Size(52, 30);
             this.buttonAdd.TabIndex = 7;
             this.buttonAdd.Text = ">>";
             this.buttonAdd.UseVisualStyleBackColor = true;
@@ -311,19 +313,21 @@ namespace Resx2Xls
             // 
             // listBoxCultures
             // 
+            this.listBoxCultures.DisplayMember = "EnglishName";
             this.listBoxCultures.FormattingEnabled = true;
             this.listBoxCultures.Location = new System.Drawing.Point(67, 100);
             this.listBoxCultures.Name = "listBoxCultures";
-            this.listBoxCultures.Size = new System.Drawing.Size(149, 121);
+            this.listBoxCultures.Size = new System.Drawing.Size(164, 277);
             this.listBoxCultures.TabIndex = 4;
             this.listBoxCultures.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxCultures_MouseDoubleClick);
             // 
             // listBoxSelected
             // 
+            this.listBoxSelected.DisplayMember = "EnglishName";
             this.listBoxSelected.FormattingEnabled = true;
-            this.listBoxSelected.Location = new System.Drawing.Point(280, 100);
+            this.listBoxSelected.Location = new System.Drawing.Point(319, 100);
             this.listBoxSelected.Name = "listBoxSelected";
-            this.listBoxSelected.Size = new System.Drawing.Size(149, 121);
+            this.listBoxSelected.Size = new System.Drawing.Size(164, 277);
             this.listBoxSelected.TabIndex = 6;
             this.listBoxSelected.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxSelected_MouseDoubleClick);
             // 
@@ -471,6 +475,7 @@ namespace Resx2Xls
             this.textBoxSummary.Multiline = true;
             this.textBoxSummary.Name = "textBoxSummary";
             this.textBoxSummary.ReadOnly = true;
+            this.textBoxSummary.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxSummary.Size = new System.Drawing.Size(646, 255);
             this.textBoxSummary.TabIndex = 0;
             // 
