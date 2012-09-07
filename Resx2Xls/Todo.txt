@@ -2,9 +2,7 @@
 
 Features we would like soon
 - Convert multiple solutions into 1 excel file
-- Scale images before inserting them (less bytes)
 - Automatically mark bad translations (faulty string inserts, missing {0})
-- Filter on default culture keys and comments using regular expressions
 
 Long term
 - Automatically add exported .resx files into solutions
