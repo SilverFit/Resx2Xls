@@ -12,6 +12,7 @@
     using System.Runtime.InteropServices;
     using System.Text.RegularExpressions;
     using Excel = Microsoft.Office.Interop.Excel;
+    using ResX = Resx2Xls.Properties.Resources;
 
     /// <summary>
     /// Convert resource data to and from .resx and .xlsx format
@@ -53,6 +54,12 @@
         private const int ExcelCultureColumn = 4;
         #endregion
 
+        private const string ExplanationSheetName = "Explanation";
+
+        private static readonly List<string> ScreenshotExtensions = new List<string> { ".png", ".jpg", ".jpeg", };
+
+        private const int MaxScreenshotWidth = 800;
+
         /// <summary>
         /// List of keys that will be ignored from resx files
         /// </summary>
@@ -89,6 +96,12 @@
 
             foreach (Excel.Worksheet sheet in sheets)
             {
+                // Skip the explanation sheet
+                if (sheet.Index == 1 && sheet.Name == ExplanationSheetName)
+                {
+                    continue;
+                }
+
                 // Get filesource for current sheet
                 var filesource = (sheet.Cells[ExcelMetadataRow, ExcelFilesourceColumn] as Excel.Range).Text.ToString();
 
@@ -180,17 +193,19 @@
 
         /// <summary>
         /// Export this ResxData to an .xlsx file
+        /// 
+        /// Adds a first page with instructions
         /// </summary>
         /// <param name="outputPath">Path to write .xlsx file to</param>
-        public void ToXls(string outputPath, string screenshotPath, Action<string> addSummaryDelegate)
+        public void ToXls(string outputPath, string screenshotsPath, Action<string> addSummaryDelegate)
         {
             Excel.Application app = new Excel.Application();
             Excel.Workbook wb = app.Workbooks.Add(Excel.XlWBATemplate.xlWBATWorksheet);
             Excel.Sheets sheets = wb.Worksheets;
             var cultures = this.exportCultures.Select(c => c.Name).ToList();
-            int sheetIndex = 1;
 
             var firstSheet = app.ActiveSheet as Excel.Worksheet;
+            int sheetIndex = firstSheet.Index;
 
             // Iterate over all filesources that have keys assigned
             var filesources = this.PrimaryTranslation.Select(r => r.ResxRow.FileSource)
@@ -198,6 +213,7 @@
             var filesourcesdict = new Dictionary<string, string>();
             foreach (var filesource in filesources)
             {
+                // Create a dictionary for name:relative_path for all resx files
                 var name = Regex.Replace(filesource, @"^.*\\", "");
                 name = Regex.Replace(name, @"\.[^\.]*$", "");
                 name = name.Substring(0, Math.Min(name.Length, 31));
@@ -208,150 +224,17 @@
             foreach (var filesource in filesourcesdict.OrderBy(kvp => kvp.Key))
             {
                 // add sheet
-                var sheet = sheets.Add(Before: sheets[sheetIndex]) as Excel.Worksheet;
+                var sheet = sheets.Add(After: sheets[sheetIndex]) as Excel.Worksheet;
                 sheet.Name = filesource.Key;
-                sheetIndex++;
+                sheetIndex = sheet.Index;
                 addSummaryDelegate("Created sheet " + filesource.Key);
 
-                // add filesource metadata
-                Excel.Range filesourcecell = sheet.Cells[ExcelMetadataRow, ExcelFilesourceColumn] as Excel.Range;
-                filesourcecell.Value2 = filesource.Value;
-                filesourcecell.Font.Italic = true;
-
-                // add headers and culture metadata
-                sheet.Cells[ExcelHeaderRow, ExcelKeyColumn] = "Key";
-                sheet.Cells[ExcelHeaderRow, ExcelCommentColumn] = "Comment";
-                sheet.Cells[ExcelHeaderRow, ExcelValueColumn] = "Value";
-                int index = ExcelCultureColumn;
-                foreach (var culture in this.exportCultures)
-                {
-                    sheet.Cells[ExcelHeaderRow, index] = culture.DisplayName;
-                    sheet.Cells[ExcelMetadataRow, index] = culture.Name;
-                    index++;
-                }
-
-                // make header bold and metadata italic
-                var metadatarow = sheet.Rows[RowIndex: ExcelMetadataRow] as Excel.Range;
-                metadatarow.Font.Italic = true;
-                metadatarow.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.White);
-                metadatarow.Locked = true;
-                metadatarow.Hidden = true;
-                var headerrow = sheet.Rows[RowIndex: ExcelHeaderRow] as Excel.Range;
-                headerrow.Font.Bold = true;
-                headerrow.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.White);
-                headerrow.Locked = true;
-
-                // set border
-                var borders = headerrow.Borders.get_Item(Excel.XlBordersIndex.xlEdgeBottom);
-                borders.LineStyle = Excel.XlLineStyle.xlContinuous;
-                borders.Weight = Excel.XlBorderWeight.xlMedium;
-
-                // add actual data
-                int row = ExcelDataRow;
-                foreach (var r in this.PrimaryTranslation.Where(r => r.ResxRow.FileSource == filesource.Value).OrderBy(r => r.Key))
-                {
-                    sheet.Cells[row, ExcelKeyColumn] = r.Key;
-                    sheet.Cells[row, ExcelCommentColumn] = r.Comment;
-                    sheet.Cells[row, ExcelValueColumn] = r.Value.Replace(@"\r\n", Environment.NewLine);
-                    
-                    SecondaryTranslationRow[] rows = r.GetResxLocalizedRows();
-
-                    // Set background and unlock culture cells
-                    for (int i = 0; i < cultures.Count; i++)
-                    {
-                        var cell = sheet.Cells[row, ExcelCultureColumn + i] as Excel.Range;
-                        var color = r.Implicit ? System.Drawing.Color.Bisque : System.Drawing.Color.Yellow;
-                        cell.Interior.Color = System.Drawing.ColorTranslator.ToOle(color);
-                        cell.Locked = false;
-                        Marshal.ReleaseComObject(cell);
-                    }
-
-                    foreach (SecondaryTranslationRow lr in rows)
-                    {
-                        int col = cultures.IndexOf(lr.Culture);
-                        if (col >= 0)
-                        {
-                            if (!string.IsNullOrEmpty(lr.Value))
-                            {
-                                var cell = sheet.Cells[row, ExcelCultureColumn + col] as Excel.Range;
-                                var color = r.Implicit ? System.Drawing.Color.LightBlue : System.Drawing.Color.YellowGreen;
-                                cell.Interior.Color = System.Drawing.ColorTranslator.ToOle(color);
-                                sheet.Cells[row, col + ExcelCultureColumn] = lr.Value;
-                                Marshal.ReleaseComObject(cell);
-                            }
-                        }
-                    }
-
-                    row++;
-                }
-                sheet.Cells.get_Range("A1", "Z1").EntireColumn.AutoFit();
-                sheet.Cells.get_Range("A1", "Z1").EntireColumn.VerticalAlignment = Excel.XlVAlign.xlVAlignTop;
-
-                // Insert screenshots
-                List<string> validExtensions = new List<string>();
-                validExtensions.Add(".png");
-                validExtensions.Add(".jpg");
-                validExtensions.Add(".jpeg");
-
-                var screenshotDir = Path.Combine(screenshotPath, filesource.Key);
-                if (Directory.Exists(screenshotDir))
-                {
-                    var lastcell = sheet.Cells[row, 1] as Excel.Range;
-                    var lastCellTopPoints = (Double)(lastcell.Top);
-                    var offset = (float)lastCellTopPoints + 20;
-                    Marshal.ReleaseComObject(lastcell);
-                    var screenshotFiles = Directory.GetFiles(screenshotDir).Where(f => validExtensions.Contains(Path.GetExtension(f)));
-                    foreach (var file in screenshotFiles)
-                    {
-                        var size = System.Drawing.Image.FromFile(file).Size;
-                        sheet.Shapes.AddPicture(file,
-                            Microsoft.Office.Core.MsoTriState.msoFalse,
-                            Microsoft.Office.Core.MsoTriState.msoCTrue,
-                            10, offset, size.Width / 2, size.Height / 2);
-                        offset += size.Height / 2 + 10;
-                    }
-                }
- 
-                // Set width of value column
-                var valuecolumn = sheet.Columns.get_Item(ExcelValueColumn) as Excel.Range;
-                valuecolumn.ColumnWidth = 80;
-
-                // Set width of translated columns
-                for (int i = 0; i < cultures.Count; i++)
-                {
-                    var column = sheet.Columns.get_Item(i + ExcelCultureColumn) as Excel.Range;
-                    column.ColumnWidth = 60;
-                    Marshal.ReleaseComObject(column);
-                }
-
-                // hide key column
-                if (Properties.Settings.Default.HideKeys)
-                {
-                    var column = sheet.Columns.get_Item(ExcelKeyColumn) as Excel.Range;
-                    column.Hidden = true;
-                    Marshal.ReleaseComObject(column);
-                }
-
-                // hide comment column
-                if (Properties.Settings.Default.HideComments)
-                {
-                    var column = sheet.Columns.get_Item(ExcelCommentColumn) as Excel.Range;
-                    //column.Hidden = true;
-                    column.ColumnWidth = 0;
-                    Marshal.ReleaseComObject(column);
-                }
-
-                sheet.Protect(Password: "", Contents: true, AllowFormattingColumns: true);
-
-                Marshal.ReleaseComObject(metadatarow);
-                Marshal.ReleaseComObject(headerrow);
-                Marshal.ReleaseComObject(borders);
-                Marshal.ReleaseComObject(valuecolumn);
-                Marshal.ReleaseComObject(sheet);
+                FillXlsSheet(screenshotsPath, cultures, filesource, sheet);
             }
 
-            // Remove Sheet1 that is added by default
-            firstSheet.Delete();
+            // Make the first sheet active
+            CreateExplanationSheet(firstSheet);
+            ((Excel._Worksheet)firstSheet).Activate();
 
             // Save the Workbook and force overwriting by rename trick
             string tmpFile = Path.GetTempFileName();
@@ -368,6 +251,177 @@
             {
                 File.WriteAllText(outputPath + ".log", this.ReadResxReport);
             }
+        }
+
+        private void FillXlsSheet(string screenshotBasePath, List<string> cultures, KeyValuePair<string, string> filesource, Excel.Worksheet sheet)
+        {
+            // add filesource metadata
+            Excel.Range filesourcecell = sheet.Cells[ExcelMetadataRow, ExcelFilesourceColumn] as Excel.Range;
+            filesourcecell.Value2 = filesource.Value;
+            filesourcecell.Font.Italic = true;
+
+            // add headers and culture metadata
+            sheet.Cells[ExcelHeaderRow, ExcelKeyColumn] = "Key";
+            sheet.Cells[ExcelHeaderRow, ExcelCommentColumn] = "Comment";
+            sheet.Cells[ExcelHeaderRow, ExcelValueColumn] = "Value";
+            int index = ExcelCultureColumn;
+            foreach (var culture in this.exportCultures)
+            {
+                sheet.Cells[ExcelHeaderRow, index] = culture.DisplayName;
+                sheet.Cells[ExcelMetadataRow, index] = culture.Name;
+                index++;
+            }
+
+            // make header bold and metadata italic
+            var metadatarow = sheet.Rows[RowIndex: ExcelMetadataRow] as Excel.Range;
+            metadatarow.Font.Italic = true;
+            metadatarow.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.White);
+            metadatarow.Locked = true;
+            metadatarow.Hidden = true;
+            var headerrow = sheet.Rows[RowIndex: ExcelHeaderRow] as Excel.Range;
+            headerrow.Font.Bold = true;
+            headerrow.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.White);
+            headerrow.Locked = true;
+
+            // set border
+            var borders = headerrow.Borders.get_Item(Excel.XlBordersIndex.xlEdgeBottom);
+            borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+            borders.Weight = Excel.XlBorderWeight.xlMedium;
+
+            // add actual data
+            int row = ExcelDataRow;
+            foreach (var r in this.PrimaryTranslation.Where(r => r.ResxRow.FileSource == filesource.Value).OrderBy(r => r.Key))
+            {
+                sheet.Cells[row, ExcelKeyColumn] = r.Key;
+                sheet.Cells[row, ExcelCommentColumn] = r.Comment;
+                sheet.Cells[row, ExcelValueColumn] = r.Value.Replace(@"\r\n", Environment.NewLine);
+
+                SecondaryTranslationRow[] rows = r.GetResxLocalizedRows();
+
+                // Set background and unlock culture cells
+                for (int i = 0; i < cultures.Count; i++)
+                {
+                    var cell = sheet.Cells[row, ExcelCultureColumn + i] as Excel.Range;
+                    var color = r.Implicit ? System.Drawing.Color.Bisque : System.Drawing.Color.Yellow;
+                    cell.Interior.Color = System.Drawing.ColorTranslator.ToOle(color);
+                    cell.Locked = false;
+                    Marshal.ReleaseComObject(cell);
+                }
+
+                foreach (SecondaryTranslationRow lr in rows)
+                {
+                    int col = cultures.IndexOf(lr.Culture);
+                    if (col >= 0)
+                    {
+                        if (!string.IsNullOrEmpty(lr.Value))
+                        {
+                            var cell = sheet.Cells[row, ExcelCultureColumn + col] as Excel.Range;
+                            var color = r.Implicit ? System.Drawing.Color.LightBlue : System.Drawing.Color.YellowGreen;
+                            cell.Interior.Color = System.Drawing.ColorTranslator.ToOle(color);
+                            sheet.Cells[row, col + ExcelCultureColumn] = lr.Value;
+                            Marshal.ReleaseComObject(cell);
+                        }
+                    }
+                }
+
+                row++;
+            }
+            sheet.Cells.get_Range("A1", "Z1").EntireColumn.AutoFit();
+            sheet.Cells.get_Range("A1", "Z1").EntireColumn.VerticalAlignment = Excel.XlVAlign.xlVAlignTop;
+
+            // Insert screenshots
+            var sheetScreenshotDirectory = Path.Combine(screenshotBasePath, filesource.Key);
+            if (Directory.Exists(sheetScreenshotDirectory))
+            {
+                Excel.Range lastcell = sheet.Cells[row, 1] as Excel.Range;
+                double lastCellTopPoints = (double)(lastcell.Top);
+                float offset = (float)lastCellTopPoints + 20;
+                Marshal.ReleaseComObject(lastcell);
+
+                var screenshotFiles = Directory.GetFiles(sheetScreenshotDirectory)
+                                               .Where(f => ScreenshotExtensions.Contains(Path.GetExtension(f)));
+                foreach (var screenshotFile in screenshotFiles)
+                {
+                    int width, height;
+                    string resizedPath;
+                    bool isTempFile = ImageHelper.GetScaledImage(screenshotFile, ResxData.MaxScreenshotWidth, out width, out height, out resizedPath);
+
+                    sheet.Shapes.AddPicture(resizedPath,
+                        Microsoft.Office.Core.MsoTriState.msoFalse,
+                        Microsoft.Office.Core.MsoTriState.msoCTrue,
+                        10, offset, width, height);
+                    offset += height + 10;
+
+                    if (isTempFile)
+                    {
+                        File.Delete(resizedPath);
+                    }
+                }
+            }
+
+            // Set width of value column
+            var valuecolumn = sheet.Columns.get_Item(ExcelValueColumn) as Excel.Range;
+            valuecolumn.ColumnWidth = 80;
+
+            // Set width of translated columns
+            for (int i = 0; i < cultures.Count; i++)
+            {
+                var column = sheet.Columns.get_Item(i + ExcelCultureColumn) as Excel.Range;
+                column.ColumnWidth = 60;
+                Marshal.ReleaseComObject(column);
+            }
+
+            // hide key column
+            if (Properties.Settings.Default.HideKeys)
+            {
+                var column = sheet.Columns.get_Item(ExcelKeyColumn) as Excel.Range;
+                column.Hidden = true;
+                Marshal.ReleaseComObject(column);
+            }
+
+            // hide comment column
+            if (Properties.Settings.Default.HideComments)
+            {
+                var column = sheet.Columns.get_Item(ExcelCommentColumn) as Excel.Range;
+                //column.Hidden = true;
+                column.ColumnWidth = 0;
+                Marshal.ReleaseComObject(column);
+            }
+
+            sheet.Protect(Password: "", Contents: true, AllowFormattingColumns: true);
+
+            Marshal.ReleaseComObject(metadatarow);
+            Marshal.ReleaseComObject(headerrow);
+            Marshal.ReleaseComObject(borders);
+            Marshal.ReleaseComObject(valuecolumn);
+            Marshal.ReleaseComObject(sheet);
+        }
+
+        private void CreateExplanationSheet(Excel.Worksheet sheet)
+        {
+            sheet.Name = ExplanationSheetName;
+
+            int rowIndex = 2;
+            int columnIndex = 2;
+
+            var column = sheet.Columns.get_Item(ExcelValueColumn) as Excel.Range;
+            column.ColumnWidth = 160;
+            column.WrapText = true;
+
+            sheet.Cells.Font.Size = 16;
+
+            sheet.Cells[rowIndex++, columnIndex] = ResX.explanation_header;
+            rowIndex++;
+            sheet.Cells[rowIndex++, columnIndex] = ResX.explanation_yellow;
+            sheet.Cells[rowIndex++, columnIndex] = ResX.explanation_green;
+            sheet.Cells[rowIndex++, columnIndex] = ResX.explanation_screenshot1;
+            sheet.Cells[rowIndex++, columnIndex] = ResX.explanation_screenshot2;
+            sheet.Cells[rowIndex++, columnIndex] = ResX.explanation_string_inserts;
+            sheet.Cells[rowIndex++, columnIndex] = ResX.explanation_excel_newline;
+
+            sheet.Protect(Password: "", Contents: true, AllowFormattingColumns: true, AllowFormattingRows: true);
+
+            Marshal.ReleaseComObject(column);
         }
 
         /// <summary>

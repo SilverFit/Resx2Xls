@@ -60,6 +60,69 @@ namespace Resx2Xls.Properties {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to * If the text contains a line break, please add a line break at the same point in the text, using the keyboard shortcut Alt + Enter.
+        /// </summary>
+        internal static string explanation_excel_newline {
+            get {
+                return ResourceManager.GetString("explanation_excel_newline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to * Check if the translations in the green cells are still correct; if not, please translate them again.
+        /// </summary>
+        internal static string explanation_green {
+            get {
+                return ResourceManager.GetString("explanation_green", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This Excel file contains all you need to create a new translation. Please use the file as follows:.
+        /// </summary>
+        internal static string explanation_header {
+            get {
+                return ResourceManager.GetString("explanation_header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to * The screenshots serve as examples; from these screenshots, you can make an estimation of how much space is available for pieces of texts.
+        /// </summary>
+        internal static string explanation_screenshot1 {
+            get {
+                return ResourceManager.GetString("explanation_screenshot1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to * Do not translate any texts because they are on the screenshots; only translate those texts that are in the cells of the excel sheet.
+        /// </summary>
+        internal static string explanation_screenshot2 {
+            get {
+                return ResourceManager.GetString("explanation_screenshot2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to * If the text contains codes like {0}, please keep them in the translated text in the same location (numbers are inserted into the texts at these points).
+        /// </summary>
+        internal static string explanation_string_inserts {
+            get {
+                return ResourceManager.GetString("explanation_string_inserts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to * Please translate all the yellow cells.
+        /// </summary>
+        internal static string explanation_yellow {
+            get {
+                return ResourceManager.GetString("explanation_yellow", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Bitmap finishbar {
             get {
                 object obj = ResourceManager.GetObject("finishbar", resourceCulture);

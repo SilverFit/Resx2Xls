@@ -144,4 +144,25 @@ Build your localized Resource files from a Filled Excel Document.</value>
     <value>Operation:
 Build your localized Resource files from a Filled Excel Document.</value>
   </data>
+  <data name="explanation_excel_newline" xml:space="preserve">
+    <value>* If the text contains a line break, please add a line break at the same point in the text, using the keyboard shortcut Alt + Enter</value>
+  </data>
+  <data name="explanation_green" xml:space="preserve">
+    <value>* Check if the translations in the green cells are still correct; if not, please translate them again</value>
+  </data>
+  <data name="explanation_screenshot1" xml:space="preserve">
+    <value>* The screenshots serve as examples; from these screenshots, you can make an estimation of how much space is available for pieces of texts</value>
+  </data>
+  <data name="explanation_screenshot2" xml:space="preserve">
+    <value>* Do not translate any texts because they are on the screenshots; only translate those texts that are in the cells of the excel sheet</value>
+  </data>
+  <data name="explanation_string_inserts" xml:space="preserve">
+    <value>* If the text contains codes like {0}, please keep them in the translated text in the same location (numbers are inserted into the texts at these points)</value>
+  </data>
+  <data name="explanation_yellow" xml:space="preserve">
+    <value>* Please translate all the yellow cells</value>
+  </data>
+  <data name="explanation_header" xml:space="preserve">
+    <value>This Excel file contains all you need to create a new translation. Please use the file as follows:</value>
+  </data>
 </root>

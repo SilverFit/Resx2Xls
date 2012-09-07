@@ -193,7 +193,7 @@ namespace Resx2Xls
             // browseButtonScreenshots
             // 
             this.browseButtonScreenshots.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.browseButtonScreenshots.Location = new System.Drawing.Point(467, 246);
+            this.browseButtonScreenshots.Location = new System.Drawing.Point(467, 245);
             this.browseButtonScreenshots.Name = "browseButtonScreenshots";
             this.browseButtonScreenshots.Size = new System.Drawing.Size(75, 23);
             this.browseButtonScreenshots.TabIndex = 15;
@@ -235,7 +235,7 @@ namespace Resx2Xls
             // buttonBrowse
             // 
             this.buttonBrowse.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.buttonBrowse.Location = new System.Drawing.Point(467, 136);
+            this.buttonBrowse.Location = new System.Drawing.Point(467, 135);
             this.buttonBrowse.Name = "buttonBrowse";
             this.buttonBrowse.Size = new System.Drawing.Size(75, 23);
             this.buttonBrowse.TabIndex = 11;

@@ -95,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AssemblyInfo.cs.template" />
+    <Compile Include="ImageHelper.cs" />
     <Compile Include="Resx2XlsForm.cs">
       <SubType>Form</SubType>
     </Compile>
