@@ -55,6 +55,34 @@ namespace Resx2Xls.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
+            "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
+            "tring>untranslatable</string>\r\n</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection ExcludeComments {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["ExcludeComments"]));
+            }
+            set {
+                this["ExcludeComments"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
+            "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
+            "tring>MagicStringResources</string>\r\n</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection ExcludeFilenames {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["ExcludeFilenames"]));
+            }
+            set {
+                this["ExcludeFilenames"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("it-IT;en-US;fr-FR;de-DE;es-ES")]
         public string CultureList {
             get {
@@ -62,18 +90,6 @@ namespace Resx2Xls.Properties {
             }
             set {
                 this["CultureList"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool FolderNamespaceNaming {
-            get {
-                return ((bool)(this["FolderNamespaceNaming"]));
-            }
-            set {
-                this["FolderNamespaceNaming"] = value;
             }
         }
         
@@ -115,29 +131,25 @@ namespace Resx2Xls.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
-            "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
-            "tring>untranslatable</string>\r\n</ArrayOfString>")]
-        public global::System.Collections.Specialized.StringCollection ExcludeComments {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool PurgeNonexistant {
             get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["ExcludeComments"]));
+                return ((bool)(this["PurgeNonexistant"]));
             }
             set {
-                this["ExcludeComments"] = value;
+                this["PurgeNonexistant"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
-            "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
-            "tring>MagicStringResources</string>\r\n</ArrayOfString>")]
-        public global::System.Collections.Specialized.StringCollection ExcludeFilenames {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ScanSubfolders {
             get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["ExcludeFilenames"]));
+                return ((bool)(this["ScanSubfolders"]));
             }
             set {
-                this["ExcludeFilenames"] = value;
+                this["ScanSubfolders"] = value;
             }
         }
     }

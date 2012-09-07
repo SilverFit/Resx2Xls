@@ -166,14 +166,8 @@
         /// <param name="excludeCommentList">list of comments to exclude (regular expressions)</param>
         /// <param name="useFolderNamespacePrefix">use folder namespace prefix</param>
         /// <returns>a ResxData with all data</returns>
-        public static ResxData FromResx(
-            string path,
-            bool deepSearch,
-            bool purge,
-            List<CultureInfo> cultureList,
-            List<string> excludeKeyList,
-            List<string> excludeCommentList,
-            bool useFolderNamespacePrefix)
+        public static ResxData FromResx(string path, bool deepSearch, bool purge, List<CultureInfo> cultureList,
+                                        List<string> excludeKeyList, List<string> excludeCommentList)
         {
             ResxData rd = new ResxData();
             rd.exportCultures = cultureList;
@@ -193,7 +187,7 @@
                 var resx = new Resx(f);
                 if (!resx.IsCultureSpecific)
                 {
-                    rd.ReadResx(resx, path, purge, useFolderNamespacePrefix);
+                    rd.ReadResx(resx, path, purge);
                 }
             }
 
@@ -519,11 +513,7 @@
         /// <param name="primaryResx">resource file to import</param>
         /// <param name="projectRoot">root of project used to calculate relative path</param>
         /// <param name="useFolderNamespacePrefix">use folder namespace prefix</param>
-        private void ReadResx(
-            Resx primaryResx,
-            string projectRoot,
-            bool purge,
-            bool useFolderNamespacePrefix)
+        private void ReadResx(Resx primaryResx, string projectRoot, bool purge)
         {
             // Create resx reader for primary language
             var primaryEntries = primaryResx.Read()

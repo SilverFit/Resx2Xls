@@ -26,9 +26,10 @@ namespace Resx2Xls
             this.textBox_ExcludeKey.Text = StringHelper.FromCollection(AppSettings.Default.ExcludeKeys);
             this.textBox_ExcludeComment.Text = StringHelper.FromCollection(AppSettings.Default.ExcludeComments);
             this.textBox_ExcludeFilename.Text = StringHelper.FromCollection(AppSettings.Default.ExcludeFilenames);
-            this.checkBoxFolderNaming.Checked = AppSettings.Default.FolderNamespaceNaming;
             this.hideCommentColumnCheckbox.Checked = AppSettings.Default.HideComments;
             this.hideKeyColumnCheckbox.Checked = AppSettings.Default.HideKeys;
+            this.purgeTranslation_CheckBox.Checked = AppSettings.Default.PurgeNonexistant;
+            this.checkBoxSubFolders.Checked = AppSettings.Default.ScanSubfolders;
 
             this.FillCultures();
         }
@@ -68,16 +69,8 @@ namespace Resx2Xls
             }
         }
 
-        public void ResxToXls(
-            string path,
-            string screenshotPath,
-            bool deepSearch,
-            bool purge,
-            string outputPath,
-            List<CultureInfo> cultures,
-            List<string> excludeKeyList,
-            List<string> excludeCommentList,
-            bool useFolderNamespacePrefix)
+        public void ResxToXls(string path, string screenshotPath, bool deepSearch, bool purge, string outputPath,
+                              List<CultureInfo> cultures, List<string> excludeKeyList, List<string> excludeCommentList)
         {
             if (!Directory.Exists(path))
                 return;
@@ -86,7 +79,7 @@ namespace Resx2Xls
 
             this.AddSummaryLine();
             this.AddSummaryLine(ResX.parsing_resx);
-            var resxdata = ResxData.FromResx(path, deepSearch, purge, cultures, excludeKeyList, excludeCommentList, useFolderNamespacePrefix);
+            var resxdata = ResxData.FromResx(path, deepSearch, purge, cultures, excludeKeyList, excludeCommentList);
             resxdata.ToXls(outputPath, screenshotPath, this.AddSummaryLine);
             this.ShowXls(outputPath);
             
@@ -206,10 +199,6 @@ namespace Resx2Xls
 
         private void FinishWizard()
         {
-            // Set settings here, no need to pass along
-            AppSettings.Default.HideKeys = hideKeyColumnCheckbox.Checked;
-            AppSettings.Default.HideComments = hideCommentColumnCheckbox.Checked;
-
             List<string> excludeKeyList = StringHelper.ListFromCollection(AppSettings.Default.ExcludeKeys);
             List<string> excludeCommentList = StringHelper.ListFromCollection(AppSettings.Default.ExcludeComments);
 
@@ -224,6 +213,7 @@ namespace Resx2Xls
                     if (String.IsNullOrEmpty(this.textBoxFolder.Text))
                     {
                         MessageBox.Show(
+                            this,
                             "You must select a the .Net Project root wich contains your updated resx files",
                             "Update",
                             MessageBoxButtons.OK,
@@ -237,16 +227,8 @@ namespace Resx2Xls
                     {
                         Application.DoEvents();
                         string outputPath = this.saveFileDialogXls.FileName;
-                        ResxToXls(
-                            this.textBoxFolder.Text,
-                            this.textBoxScreenshots.Text,
-                            this.checkBoxSubFolders.Checked,
-                            this.purgeTranslation_CheckBox.Checked,
-                            outputPath,
-                            cultures,
-                            excludeKeyList,
-                            excludeCommentList,
-                            this.checkBoxFolderNaming.Checked);
+                        ResxToXls(this.textBoxFolder.Text, this.textBoxScreenshots.Text, AppSettings.Default.ScanSubfolders,
+                                  AppSettings.Default.PurgeNonexistant, outputPath, cultures, excludeKeyList, excludeCommentList);
                         MessageBox.Show(
                             this,
                             "Excel Document created.",
@@ -312,8 +294,8 @@ namespace Resx2Xls
                     else
                     {
                         AppSettings.Default.FolderPath = this.textBoxFolder.Text;
-                        AppSettings.Default.FolderNamespaceNaming = this.checkBoxFolderNaming.Checked;
                         AppSettings.Default.ScreenshotPath = this.textBoxScreenshots.Text;
+                        AppSettings.Default.ScanSubfolders = this.checkBoxSubFolders.Checked;
                     }
                     break;
 
@@ -341,6 +323,10 @@ namespace Resx2Xls
                     AppSettings.Default.ExcludeKeys = StringHelper.ToCollection(this.textBox_ExcludeKey.Text);
                     AppSettings.Default.ExcludeComments = StringHelper.ToCollection(this.textBox_ExcludeComment.Text);
                     AppSettings.Default.ExcludeFilenames = StringHelper.ToCollection(this.textBox_ExcludeFilename.Text);
+
+                    AppSettings.Default.HideKeys = this.hideKeyColumnCheckbox.Checked;
+                    AppSettings.Default.HideComments = this.hideCommentColumnCheckbox.Checked;
+                    AppSettings.Default.PurgeNonexistant = this.purgeTranslation_CheckBox.Checked;
 
                     args.NextStepIndex = (int)WizardStep.Finish;
                     this.textBoxSummary.Text = ResX.summary_create_excel + Environment.NewLine;

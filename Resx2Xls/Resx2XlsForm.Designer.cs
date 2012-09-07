@@ -53,12 +53,17 @@ namespace Resx2Xls
             this.listBoxCultures = new System.Windows.Forms.ListBox();
             this.listBoxCulturesSelected = new System.Windows.Forms.ListBox();
             this.intermediateStepOptions = new WizardBase.IntermediateStep();
-            this.hideKeyColumnCheckbox = new System.Windows.Forms.CheckBox();
-            this.hideCommentColumnCheckbox = new System.Windows.Forms.CheckBox();
-            this.purgeTranslation_CheckBox = new System.Windows.Forms.CheckBox();
-            this.checkBoxFolderNaming = new System.Windows.Forms.CheckBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.textBox_ExcludeFilename = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.textBox_ExcludeKey = new System.Windows.Forms.TextBox();
+            this.textBox_ExcludeComment = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.purgeTranslation_CheckBox = new System.Windows.Forms.CheckBox();
+            this.hideCommentColumnCheckbox = new System.Windows.Forms.CheckBox();
+            this.hideKeyColumnCheckbox = new System.Windows.Forms.CheckBox();
             this.intermediateStepXlsSelect = new WizardBase.IntermediateStep();
             this.labelXlsFile = new System.Windows.Forms.Label();
             this.textBoxXls = new System.Windows.Forms.TextBox();
@@ -67,21 +72,15 @@ namespace Resx2Xls
             this.label6 = new System.Windows.Forms.Label();
             this.textBoxSummary = new System.Windows.Forms.TextBox();
             this.screenshotFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            this.textBox_ExcludeComment = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.textBox_ExcludeFilename = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
             this.startStep1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.intermediateStepProject.SuspendLayout();
             this.intermediateStepCultures.SuspendLayout();
             this.intermediateStepOptions.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.intermediateStepXlsSelect.SuspendLayout();
             this.finishStep1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // openFileDialogXls
@@ -327,12 +326,12 @@ namespace Resx2Xls
             this.listBoxCultures.TabIndex = 4;
             this.listBoxCultures.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxCultures_MouseDoubleClick);
             // 
-            // listBoxSelected
+            // listBoxCulturesSelected
             // 
             this.listBoxCulturesSelected.DisplayMember = "EnglishName";
             this.listBoxCulturesSelected.FormattingEnabled = true;
             this.listBoxCulturesSelected.Location = new System.Drawing.Point(319, 100);
-            this.listBoxCulturesSelected.Name = "listBoxSelected";
+            this.listBoxCulturesSelected.Name = "listBoxCulturesSelected";
             this.listBoxCulturesSelected.Size = new System.Drawing.Size(164, 277);
             this.listBoxCulturesSelected.TabIndex = 6;
             this.listBoxCulturesSelected.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxSelected_MouseDoubleClick);
@@ -349,51 +348,54 @@ namespace Resx2Xls
             this.intermediateStepOptions.Title = "Options.";
             this.intermediateStepOptions.TitleFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
             // 
-            // hideKeyColumnCheckbox
+            // groupBox3
             // 
-            this.hideKeyColumnCheckbox.AutoSize = true;
-            this.hideKeyColumnCheckbox.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.hideKeyColumnCheckbox.Location = new System.Drawing.Point(9, 65);
-            this.hideKeyColumnCheckbox.Name = "hideKeyColumnCheckbox";
-            this.hideKeyColumnCheckbox.Size = new System.Drawing.Size(105, 17);
-            this.hideKeyColumnCheckbox.TabIndex = 17;
-            this.hideKeyColumnCheckbox.Text = "Hide key column";
-            this.hideKeyColumnCheckbox.UseVisualStyleBackColor = true;
+            this.groupBox3.Controls.Add(this.textBox_ExcludeFilename);
+            this.groupBox3.Controls.Add(this.label9);
+            this.groupBox3.Controls.Add(this.textBox_ExcludeKey);
+            this.groupBox3.Controls.Add(this.textBox_ExcludeComment);
+            this.groupBox3.Controls.Add(this.label2);
+            this.groupBox3.Controls.Add(this.label8);
+            this.groupBox3.Location = new System.Drawing.Point(53, 101);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(594, 177);
+            this.groupBox3.TabIndex = 21;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Ignore translation entry (regular expressions)";
             // 
-            // hideCommentColumnCheckbox
+            // textBox_ExcludeFilename
             // 
-            this.hideCommentColumnCheckbox.AutoSize = true;
-            this.hideCommentColumnCheckbox.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.hideCommentColumnCheckbox.Location = new System.Drawing.Point(9, 88);
-            this.hideCommentColumnCheckbox.Name = "hideCommentColumnCheckbox";
-            this.hideCommentColumnCheckbox.Size = new System.Drawing.Size(131, 17);
-            this.hideCommentColumnCheckbox.TabIndex = 16;
-            this.hideCommentColumnCheckbox.Text = "Hide comment column";
-            this.hideCommentColumnCheckbox.UseVisualStyleBackColor = true;
+            this.textBox_ExcludeFilename.Location = new System.Drawing.Point(393, 41);
+            this.textBox_ExcludeFilename.Multiline = true;
+            this.textBox_ExcludeFilename.Name = "textBox_ExcludeFilename";
+            this.textBox_ExcludeFilename.Size = new System.Drawing.Size(179, 121);
+            this.textBox_ExcludeFilename.TabIndex = 20;
             // 
-            // purgeTranslation_CheckBox
+            // label9
             // 
-            this.purgeTranslation_CheckBox.AutoSize = true;
-            this.purgeTranslation_CheckBox.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.purgeTranslation_CheckBox.Location = new System.Drawing.Point(9, 42);
-            this.purgeTranslation_CheckBox.Name = "purgeTranslation_CheckBox";
-            this.purgeTranslation_CheckBox.Size = new System.Drawing.Size(198, 17);
-            this.purgeTranslation_CheckBox.TabIndex = 15;
-            this.purgeTranslation_CheckBox.Text = "Purge nonexistant keys in translation";
-            this.purgeTranslation_CheckBox.UseVisualStyleBackColor = true;
+            this.label9.AutoSize = true;
+            this.label9.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.label9.Location = new System.Drawing.Point(390, 25);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(95, 13);
+            this.label9.TabIndex = 21;
+            this.label9.Text = "Resx filename filter";
             // 
-            // checkBoxFolderNaming
+            // textBox_ExcludeKey
             // 
-            this.checkBoxFolderNaming.AutoSize = true;
-            this.checkBoxFolderNaming.Checked = true;
-            this.checkBoxFolderNaming.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxFolderNaming.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.checkBoxFolderNaming.Location = new System.Drawing.Point(9, 19);
-            this.checkBoxFolderNaming.Name = "checkBoxFolderNaming";
-            this.checkBoxFolderNaming.Size = new System.Drawing.Size(316, 17);
-            this.checkBoxFolderNaming.TabIndex = 11;
-            this.checkBoxFolderNaming.Text = "Use Folder Namespace Resource Naming (VS 2005 Projects)";
-            this.checkBoxFolderNaming.UseVisualStyleBackColor = true;
+            this.textBox_ExcludeKey.Location = new System.Drawing.Point(23, 41);
+            this.textBox_ExcludeKey.Multiline = true;
+            this.textBox_ExcludeKey.Name = "textBox_ExcludeKey";
+            this.textBox_ExcludeKey.Size = new System.Drawing.Size(179, 121);
+            this.textBox_ExcludeKey.TabIndex = 13;
+            // 
+            // textBox_ExcludeComment
+            // 
+            this.textBox_ExcludeComment.Location = new System.Drawing.Point(208, 41);
+            this.textBox_ExcludeComment.Multiline = true;
+            this.textBox_ExcludeComment.Name = "textBox_ExcludeComment";
+            this.textBox_ExcludeComment.Size = new System.Drawing.Size(179, 121);
+            this.textBox_ExcludeComment.TabIndex = 18;
             // 
             // label2
             // 
@@ -405,13 +407,60 @@ namespace Resx2Xls
             this.label2.TabIndex = 14;
             this.label2.Text = "Key filter";
             // 
-            // textBox_ExcludeKey
+            // label8
             // 
-            this.textBox_ExcludeKey.Location = new System.Drawing.Point(23, 41);
-            this.textBox_ExcludeKey.Multiline = true;
-            this.textBox_ExcludeKey.Name = "textBox_ExcludeKey";
-            this.textBox_ExcludeKey.Size = new System.Drawing.Size(179, 121);
-            this.textBox_ExcludeKey.TabIndex = 13;
+            this.label8.AutoSize = true;
+            this.label8.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.label8.Location = new System.Drawing.Point(205, 25);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(73, 13);
+            this.label8.TabIndex = 19;
+            this.label8.Text = "Comment filter";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.purgeTranslation_CheckBox);
+            this.groupBox2.Controls.Add(this.hideCommentColumnCheckbox);
+            this.groupBox2.Controls.Add(this.hideKeyColumnCheckbox);
+            this.groupBox2.Location = new System.Drawing.Point(53, 284);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(594, 87);
+            this.groupBox2.TabIndex = 20;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Advanced options";
+            // 
+            // purgeTranslation_CheckBox
+            // 
+            this.purgeTranslation_CheckBox.AutoSize = true;
+            this.purgeTranslation_CheckBox.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.purgeTranslation_CheckBox.Location = new System.Drawing.Point(9, 19);
+            this.purgeTranslation_CheckBox.Name = "purgeTranslation_CheckBox";
+            this.purgeTranslation_CheckBox.Size = new System.Drawing.Size(198, 17);
+            this.purgeTranslation_CheckBox.TabIndex = 15;
+            this.purgeTranslation_CheckBox.Text = "Purge nonexistant keys in translation";
+            this.purgeTranslation_CheckBox.UseVisualStyleBackColor = true;
+            // 
+            // hideCommentColumnCheckbox
+            // 
+            this.hideCommentColumnCheckbox.AutoSize = true;
+            this.hideCommentColumnCheckbox.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.hideCommentColumnCheckbox.Location = new System.Drawing.Point(9, 65);
+            this.hideCommentColumnCheckbox.Name = "hideCommentColumnCheckbox";
+            this.hideCommentColumnCheckbox.Size = new System.Drawing.Size(131, 17);
+            this.hideCommentColumnCheckbox.TabIndex = 16;
+            this.hideCommentColumnCheckbox.Text = "Hide comment column";
+            this.hideCommentColumnCheckbox.UseVisualStyleBackColor = true;
+            // 
+            // hideKeyColumnCheckbox
+            // 
+            this.hideKeyColumnCheckbox.AutoSize = true;
+            this.hideKeyColumnCheckbox.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.hideKeyColumnCheckbox.Location = new System.Drawing.Point(9, 42);
+            this.hideKeyColumnCheckbox.Name = "hideKeyColumnCheckbox";
+            this.hideKeyColumnCheckbox.Size = new System.Drawing.Size(105, 17);
+            this.hideKeyColumnCheckbox.TabIndex = 17;
+            this.hideKeyColumnCheckbox.Text = "Hide key column";
+            this.hideKeyColumnCheckbox.UseVisualStyleBackColor = true;
             // 
             // intermediateStepXlsSelect
             // 
@@ -480,70 +529,6 @@ namespace Resx2Xls
             this.textBoxSummary.Size = new System.Drawing.Size(646, 255);
             this.textBoxSummary.TabIndex = 0;
             // 
-            // textBox_ExcludeComment
-            // 
-            this.textBox_ExcludeComment.Location = new System.Drawing.Point(208, 41);
-            this.textBox_ExcludeComment.Multiline = true;
-            this.textBox_ExcludeComment.Name = "textBox_ExcludeComment";
-            this.textBox_ExcludeComment.Size = new System.Drawing.Size(179, 121);
-            this.textBox_ExcludeComment.TabIndex = 18;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label8.Location = new System.Drawing.Point(205, 25);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(73, 13);
-            this.label8.TabIndex = 19;
-            this.label8.Text = "Comment filter";
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.checkBoxFolderNaming);
-            this.groupBox2.Controls.Add(this.purgeTranslation_CheckBox);
-            this.groupBox2.Controls.Add(this.hideCommentColumnCheckbox);
-            this.groupBox2.Controls.Add(this.hideKeyColumnCheckbox);
-            this.groupBox2.Location = new System.Drawing.Point(53, 284);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(594, 110);
-            this.groupBox2.TabIndex = 20;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Advanced options";
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.textBox_ExcludeFilename);
-            this.groupBox3.Controls.Add(this.label9);
-            this.groupBox3.Controls.Add(this.textBox_ExcludeKey);
-            this.groupBox3.Controls.Add(this.textBox_ExcludeComment);
-            this.groupBox3.Controls.Add(this.label2);
-            this.groupBox3.Controls.Add(this.label8);
-            this.groupBox3.Location = new System.Drawing.Point(53, 101);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(594, 177);
-            this.groupBox3.TabIndex = 21;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Ignore translation entry (regular expressions)";
-            // 
-            // textBox_ExcludeFilename
-            // 
-            this.textBox_ExcludeFilename.Location = new System.Drawing.Point(393, 41);
-            this.textBox_ExcludeFilename.Multiline = true;
-            this.textBox_ExcludeFilename.Name = "textBox_ExcludeFilename";
-            this.textBox_ExcludeFilename.Size = new System.Drawing.Size(179, 121);
-            this.textBox_ExcludeFilename.TabIndex = 20;
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label9.Location = new System.Drawing.Point(390, 25);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(95, 13);
-            this.label9.TabIndex = 21;
-            this.label9.Text = "Resx filename filter";
-            // 
             // Resx2XlsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -560,14 +545,14 @@ namespace Resx2Xls
             this.intermediateStepCultures.ResumeLayout(false);
             this.intermediateStepCultures.PerformLayout();
             this.intermediateStepOptions.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.intermediateStepXlsSelect.ResumeLayout(false);
             this.intermediateStepXlsSelect.PerformLayout();
             this.finishStep1.ResumeLayout(false);
             this.finishStep1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -583,7 +568,6 @@ namespace Resx2Xls
         private System.Windows.Forms.Label labelXlsFile;
         private System.Windows.Forms.Button buttonBrowseXls;
         private System.Windows.Forms.TextBox textBoxXls;
-        private System.Windows.Forms.CheckBox checkBoxFolderNaming;
         private System.Windows.Forms.CheckBox checkBoxSubFolders;
         private System.Windows.Forms.Button buttonBrowse;
         private System.Windows.Forms.TextBox textBoxFolder;
