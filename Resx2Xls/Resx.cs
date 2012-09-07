@@ -69,7 +69,7 @@
 
                 try
                 {
-                    var ci = new CultureInfo(cult);
+                    var ci = CultureInfo.GetCultureInfo(cult);
                     return true;
                 }
                 catch

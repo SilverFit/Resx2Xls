@@ -126,44 +126,24 @@ namespace Resx2Xls
                                       .ToArray();
             
             this.listBoxCultures.Items.AddRange(cultures);
-            
-            string cList = AppSettings.Default.CultureList;
 
-            string[] cultureList = cList.Split(';');
+            var selectedCultures = AppSettings.Default.CultureList.Split(';')
+                                                                  .Select(n => CultureInfo.GetCultureInfo(n))
+                                                                  .ToArray();
 
-            foreach (string cult in cultureList)
-            {
-                CultureInfo info = new CultureInfo(cult);
-
-                this.listBoxSelected.Items.Add(info);
-            }
+            this.listBoxCulturesSelected.Items.AddRange(selectedCultures);
         }
 
-        private void AddCultures()
+        private void SelectCultures()
         {
-            for (int i = 0; i < this.listBoxCultures.SelectedItems.Count; i++)
+            var cultures = this.listBoxCultures.SelectedItems.Cast<CultureInfo>().ToArray();
+            foreach (var culture in cultures)
             {
-                CultureInfo ci = (CultureInfo)this.listBoxCultures.SelectedItems[i];
-
-                if (this.listBoxSelected.Items.IndexOf(ci) == -1)
-                    this.listBoxSelected.Items.Add(ci);
+                if (this.listBoxCulturesSelected.Items.IndexOf(culture) == -1)
+                {
+                    this.listBoxCulturesSelected.Items.Add(culture);
+                }
             }
-        }
-
-        private void SaveCultures()
-        {
-            string cultures = String.Empty;
-            for (int i = 0; i < this.listBoxSelected.Items.Count; i++)
-            {
-                CultureInfo info = (CultureInfo)this.listBoxSelected.Items[i];
-
-                if (cultures != String.Empty)
-                    cultures = cultures + ";";
-
-                cultures = cultures + info.Name;
-            }
-
-            AppSettings.Default.CultureList = cultures;
         }
 
         private void buttonBrowse_Click(object sender, EventArgs e)
@@ -184,12 +164,12 @@ namespace Resx2Xls
 
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            AddCultures();
+            SelectCultures();
         }
 
         private void listBoxCultures_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            AddCultures();
+            SelectCultures();
         }
 
         private void buttonBrowseXls_Click(object sender, EventArgs e)
@@ -200,30 +180,12 @@ namespace Resx2Xls
             }
         }
 
-
         private void listBoxSelected_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (this.listBoxSelected.SelectedItems.Count > 0)
+            if (this.listBoxCulturesSelected.SelectedItems.Count > 0)
             {
-                this.listBoxSelected.Items.Remove(this.listBoxSelected.SelectedItems[0]);
+                this.listBoxCulturesSelected.Items.Remove(this.listBoxCulturesSelected.SelectedItems[0]);
             }
-        }
-
-        private void Resx2XlsForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            SaveCultures();
-            AppSettings.Default.FolderNamespaceNaming = this.checkBoxFolderNaming.Checked;
-            AppSettings.Default.Save();
-        }
-
-        private void textBoxFolder_TextChanged(object sender, EventArgs e)
-        {
-            AppSettings.Default.FolderPath = this.textBoxFolder.Text;
-        }
-
-        private void textBoxScreenshots_TextChanged(object sender, EventArgs e)
-        {
-            AppSettings.Default.ScreenshotPath = this.textBoxScreenshots.Text;
         }
 
         public void ShowXls(string path)
@@ -251,7 +213,9 @@ namespace Resx2Xls
             List<string> excludeKeyList = StringHelper.ListFromCollection(AppSettings.Default.ExcludeKeys);
             List<string> excludeCommentList = StringHelper.ListFromCollection(AppSettings.Default.ExcludeComments);
 
-            List<CultureInfo> cultures = this.listBoxSelected.Items.Cast<CultureInfo>().ToList();
+            List<CultureInfo> cultures = AppSettings.Default.CultureList.Split(';')
+                                                                        .Select(n => CultureInfo.GetCultureInfo(n))
+                                                                        .ToList();
 
             switch (ConversionType)
             {
@@ -290,7 +254,7 @@ namespace Resx2Xls
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Information);
 
-                        this.Close();
+                        this.SaveAndClose();
                     }
                     else
                     {
@@ -302,12 +266,18 @@ namespace Resx2Xls
                     XlsToResx(this.textBoxXls.Text);
                     MessageBox.Show("Localized Resources created.", "Build", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    this.Close();
+                    this.SaveAndClose();
                     break;
 
                 default:
                     throw new InvalidOperationException();
             }
+        }
+
+        private void SaveAndClose()
+        {
+            AppSettings.Default.Save();
+            this.Close();
         }
 
         private void wizardControl1_NextButtonClick(WizardBase.WizardControl sender, WizardBase.WizardNextButtonClickEventArgs args)
@@ -328,6 +298,45 @@ namespace Resx2Xls
                     }
                     break;
 
+                case WizardStep.ResX1:
+                    if (!Directory.Exists(this.textBoxFolder.Text))
+                    {
+                        MessageBox.Show(
+                            this,
+                            "Select an existing project directory to continue",
+                            "Project directory",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Exclamation);
+                        args.Cancel = true;
+                    }
+                    else
+                    {
+                        AppSettings.Default.FolderPath = this.textBoxFolder.Text;
+                        AppSettings.Default.FolderNamespaceNaming = this.checkBoxFolderNaming.Checked;
+                        AppSettings.Default.ScreenshotPath = this.textBoxScreenshots.Text;
+                    }
+                    break;
+
+                case WizardStep.ResX2:
+                    if (this.listBoxCulturesSelected.Items.Count == 0)
+                    {
+                        MessageBox.Show(
+                            this,
+                            "Please select at least one target culture",
+                            "Target culture",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Exclamation);
+                        args.Cancel = true;
+                    }
+                    else
+                    {
+                        var cultures = this.listBoxCulturesSelected.Items.Cast<CultureInfo>()
+                                                                         .Select(c => c.Name)
+                                                                         .ToArray();
+                        AppSettings.Default.CultureList = string.Join(";", cultures);
+                    }
+                    break;
+                    
                 case WizardStep.ResX3:
                     AppSettings.Default.ExcludeKeys = StringHelper.ToCollection(this.textBox_ExcludeKey.Text);
                     AppSettings.Default.ExcludeComments = StringHelper.ToCollection(this.textBox_ExcludeComment.Text);
@@ -346,10 +355,10 @@ namespace Resx2Xls
                     {
                         MessageBox.Show(
                             this,
-                            "Select an Excel document to continue",
-                            "Update",
+                            "Select an existing Excel document to continue",
+                            "Excel path",
                             MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
+                            MessageBoxIcon.Exclamation);
 
                         args.Cancel = true;
                     }

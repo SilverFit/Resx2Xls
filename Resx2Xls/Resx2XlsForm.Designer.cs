@@ -51,7 +51,7 @@ namespace Resx2Xls
             this.label1 = new System.Windows.Forms.Label();
             this.buttonAdd = new System.Windows.Forms.Button();
             this.listBoxCultures = new System.Windows.Forms.ListBox();
-            this.listBoxSelected = new System.Windows.Forms.ListBox();
+            this.listBoxCulturesSelected = new System.Windows.Forms.ListBox();
             this.intermediateStepOptions = new WizardBase.IntermediateStep();
             this.hideKeyColumnCheckbox = new System.Windows.Forms.CheckBox();
             this.hideCommentColumnCheckbox = new System.Windows.Forms.CheckBox();
@@ -196,7 +196,6 @@ namespace Resx2Xls
             this.textBoxScreenshots.Name = "textBoxScreenshots";
             this.textBoxScreenshots.Size = new System.Drawing.Size(438, 20);
             this.textBoxScreenshots.TabIndex = 13;
-            this.textBoxScreenshots.TextChanged += new System.EventHandler(this.textBoxScreenshots_TextChanged);
             // 
             // browseButtonScreenshots
             // 
@@ -225,7 +224,6 @@ namespace Resx2Xls
             this.textBoxFolder.Name = "textBoxFolder";
             this.textBoxFolder.Size = new System.Drawing.Size(438, 20);
             this.textBoxFolder.TabIndex = 9;
-            this.textBoxFolder.TextChanged += new System.EventHandler(this.textBoxFolder_TextChanged);
             // 
             // checkBoxSubFolders
             // 
@@ -260,7 +258,7 @@ namespace Resx2Xls
             this.intermediateStepCultures.Controls.Add(this.label1);
             this.intermediateStepCultures.Controls.Add(this.buttonAdd);
             this.intermediateStepCultures.Controls.Add(this.listBoxCultures);
-            this.intermediateStepCultures.Controls.Add(this.listBoxSelected);
+            this.intermediateStepCultures.Controls.Add(this.listBoxCulturesSelected);
             this.intermediateStepCultures.ForeColor = System.Drawing.SystemColors.HighlightText;
             this.intermediateStepCultures.Name = "intermediateStepCultures";
             this.intermediateStepCultures.Subtitle = "This step creates a new xls file that contains all your resource keys.";
@@ -331,13 +329,13 @@ namespace Resx2Xls
             // 
             // listBoxSelected
             // 
-            this.listBoxSelected.DisplayMember = "EnglishName";
-            this.listBoxSelected.FormattingEnabled = true;
-            this.listBoxSelected.Location = new System.Drawing.Point(319, 100);
-            this.listBoxSelected.Name = "listBoxSelected";
-            this.listBoxSelected.Size = new System.Drawing.Size(164, 277);
-            this.listBoxSelected.TabIndex = 6;
-            this.listBoxSelected.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxSelected_MouseDoubleClick);
+            this.listBoxCulturesSelected.DisplayMember = "EnglishName";
+            this.listBoxCulturesSelected.FormattingEnabled = true;
+            this.listBoxCulturesSelected.Location = new System.Drawing.Point(319, 100);
+            this.listBoxCulturesSelected.Name = "listBoxSelected";
+            this.listBoxCulturesSelected.Size = new System.Drawing.Size(164, 277);
+            this.listBoxCulturesSelected.TabIndex = 6;
+            this.listBoxCulturesSelected.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listBoxSelected_MouseDoubleClick);
             // 
             // intermediateStepOptions
             // 
@@ -554,7 +552,6 @@ namespace Resx2Xls
             this.Controls.Add(this.wizardControl1);
             this.Name = "Resx2XlsForm";
             this.Text = "Resx To Xls";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Resx2XlsForm_FormClosing);
             this.startStep1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -581,7 +578,7 @@ namespace Resx2Xls
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ListBox listBoxCultures;
         private System.Windows.Forms.Button buttonAdd;
-        private System.Windows.Forms.ListBox listBoxSelected;
+        private System.Windows.Forms.ListBox listBoxCulturesSelected;
         private System.Windows.Forms.OpenFileDialog openFileDialogXls;
         private System.Windows.Forms.Label labelXlsFile;
         private System.Windows.Forms.Button buttonBrowseXls;
