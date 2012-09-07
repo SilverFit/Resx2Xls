@@ -164,7 +164,7 @@ namespace Resx2Xls.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to Operation:
-        ///Build your localized Resource files from a Filled Excel Document..
+        ///Build an Excel document from your default language resource..
         /// </summary>
         internal static string summary_create_excel {
             get {
@@ -174,7 +174,7 @@ namespace Resx2Xls.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to Operation:
-        ///Build your localized Resource files from a Filled Excel Document..
+        ///Build your localized resource files from an Excel document..
         /// </summary>
         internal static string summary_create_resx {
             get {

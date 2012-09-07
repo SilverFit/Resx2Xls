@@ -23,7 +23,9 @@ namespace Resx2Xls
 
             this.textBoxFolder.Text = AppSettings.Default.FolderPath;
             this.textBoxScreenshots.Text = AppSettings.Default.ScreenshotPath;
-            this.textBoxExclude.Text = AppSettings.Default.ExcludeList;
+            this.textBox_ExcludeKey.Text = StringHelper.FromCollection(AppSettings.Default.ExcludeKeys);
+            this.textBox_ExcludeComment.Text = StringHelper.FromCollection(AppSettings.Default.ExcludeComments);
+            this.textBox_ExcludeFilename.Text = StringHelper.FromCollection(AppSettings.Default.ExcludeFilenames);
             this.checkBoxFolderNaming.Checked = AppSettings.Default.FolderNamespaceNaming;
             this.hideCommentColumnCheckbox.Checked = AppSettings.Default.HideComments;
             this.hideKeyColumnCheckbox.Checked = AppSettings.Default.HideKeys;
@@ -73,7 +75,8 @@ namespace Resx2Xls
             bool purge,
             string outputPath,
             List<CultureInfo> cultures,
-            List<string> excludeFilter,
+            List<string> excludeKeyList,
+            List<string> excludeCommentList,
             bool useFolderNamespacePrefix)
         {
             if (!Directory.Exists(path))
@@ -83,7 +86,7 @@ namespace Resx2Xls
 
             this.AddSummaryLine();
             this.AddSummaryLine(ResX.parsing_resx);
-            var resxdata = ResxData.FromResx(path, deepSearch, purge, cultures, excludeFilter, useFolderNamespacePrefix);
+            var resxdata = ResxData.FromResx(path, deepSearch, purge, cultures, excludeKeyList, excludeCommentList, useFolderNamespacePrefix);
             resxdata.ToXls(outputPath, screenshotPath, this.AddSummaryLine);
             this.ShowXls(outputPath);
             
@@ -206,12 +209,6 @@ namespace Resx2Xls
             }
         }
 
-        private void textBoxExclude_TextChanged(object sender, EventArgs e)
-        {
-            AppSettings.Default.ExcludeList = this.textBoxExclude.Text;
-
-        }
-
         private void Resx2XlsForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             SaveCultures();
@@ -251,7 +248,8 @@ namespace Resx2Xls
             AppSettings.Default.HideKeys = hideKeyColumnCheckbox.Checked;
             AppSettings.Default.HideComments = hideCommentColumnCheckbox.Checked;
 
-            var excludeFilter = new List<string>(this.textBoxExclude.Text.Split(';'));
+            List<string> excludeKeyList = StringHelper.ListFromCollection(AppSettings.Default.ExcludeKeys);
+            List<string> excludeCommentList = StringHelper.ListFromCollection(AppSettings.Default.ExcludeComments);
 
             List<CultureInfo> cultures = this.listBoxSelected.Items.Cast<CultureInfo>().ToList();
 
@@ -282,7 +280,8 @@ namespace Resx2Xls
                             this.purgeTranslation_CheckBox.Checked,
                             outputPath,
                             cultures,
-                            excludeFilter,
+                            excludeKeyList,
+                            excludeCommentList,
                             this.checkBoxFolderNaming.Checked);
                         MessageBox.Show(
                             this,
@@ -330,6 +329,10 @@ namespace Resx2Xls
                     break;
 
                 case WizardStep.ResX3:
+                    AppSettings.Default.ExcludeKeys = StringHelper.ToCollection(this.textBox_ExcludeKey.Text);
+                    AppSettings.Default.ExcludeComments = StringHelper.ToCollection(this.textBox_ExcludeComment.Text);
+                    AppSettings.Default.ExcludeFilenames = StringHelper.ToCollection(this.textBox_ExcludeFilename.Text);
+
                     args.NextStepIndex = (int)WizardStep.Finish;
                     this.textBoxSummary.Text = ResX.summary_create_excel + Environment.NewLine;
                     break;

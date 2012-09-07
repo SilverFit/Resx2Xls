@@ -94,6 +94,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="StringHelper.cs" />
     <None Include="Properties\AssemblyInfo.cs.template" />
     <Compile Include="ImageHelper.cs" />
     <Compile Include="Resx2XlsForm.cs">

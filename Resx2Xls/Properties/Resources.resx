@@ -138,11 +138,11 @@
   </data>
   <data name="summary_create_excel" xml:space="preserve">
     <value>Operation:
-Build your localized Resource files from a Filled Excel Document.</value>
+Build an Excel document from your default language resource.</value>
   </data>
   <data name="summary_create_resx" xml:space="preserve">
     <value>Operation:
-Build your localized Resource files from a Filled Excel Document.</value>
+Build your localized resource files from an Excel document.</value>
   </data>
   <data name="explanation_excel_newline" xml:space="preserve">
     <value>* If the text contains a line break, please add a line break at the same point in the text, using the keyboard shortcut Alt + Enter</value>

@@ -37,13 +37,19 @@ namespace Resx2Xls.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(".Name;.Parent;.ZOrder;.Type")]
-        public string ExcludeList {
+        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
+<ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+  <string>.Name$</string>
+  <string>.Parent$</string>
+  <string>.ZOrder$</string>
+  <string>.Type$</string>
+</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection ExcludeKeys {
             get {
-                return ((string)(this["ExcludeList"]));
+                return ((global::System.Collections.Specialized.StringCollection)(this["ExcludeKeys"]));
             }
             set {
-                this["ExcludeList"] = value;
+                this["ExcludeKeys"] = value;
             }
         }
         
@@ -104,6 +110,34 @@ namespace Resx2Xls.Properties {
             }
             set {
                 this["ScreenshotPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
+            "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
+            "tring>untranslatable</string>\r\n</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection ExcludeComments {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["ExcludeComments"]));
+            }
+            set {
+                this["ExcludeComments"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<ArrayOfString xmlns:xsi=\"http://www.w3." +
+            "org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\r\n  <s" +
+            "tring>MagicStringResources</string>\r\n</ArrayOfString>")]
+        public global::System.Collections.Specialized.StringCollection ExcludeFilenames {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["ExcludeFilenames"]));
+            }
+            set {
+                this["ExcludeFilenames"] = value;
             }
         }
     }

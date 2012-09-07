@@ -13,6 +13,7 @@
     using System.Text.RegularExpressions;
     using Excel = Microsoft.Office.Interop.Excel;
     using ResX = Resx2Xls.Properties.Resources;
+    using AppSettings = Resx2Xls.Properties.Settings;
 
     /// <summary>
     /// Convert resource data to and from .resx and .xlsx format
@@ -61,9 +62,14 @@
         private const int MaxScreenshotWidth = 800;
 
         /// <summary>
-        /// List of keys that will be ignored from resx files
+        /// List of keys that will be ignored from resx files (regex)
         /// </summary>
-        private List<string> excludeList;
+        private List<string> excludeKeyList;
+
+        /// <summary>
+        /// List of comments that will be ignored from resx files (regex)
+        /// </summary>
+        private List<string> excludeCommentList;
 
         /// <summary>
         /// Culture columns that will be added in the Excel document
@@ -156,7 +162,8 @@
         /// <param name="path">root path of resx files</param>
         /// <param name="deepSearch">search subdirs</param>
         /// <param name="cultureList">list of cultures to translate</param>
-        /// <param name="excludeList">list of keys to exclude</param>
+        /// <param name="excludeKeyList">list of keys to exclude (regular expressions)</param>
+        /// <param name="excludeCommentList">list of comments to exclude (regular expressions)</param>
         /// <param name="useFolderNamespacePrefix">use folder namespace prefix</param>
         /// <returns>a ResxData with all data</returns>
         public static ResxData FromResx(
@@ -164,15 +171,22 @@
             bool deepSearch,
             bool purge,
             List<CultureInfo> cultureList,
-            List<string> excludeList,
+            List<string> excludeKeyList,
+            List<string> excludeCommentList,
             bool useFolderNamespacePrefix)
         {
             ResxData rd = new ResxData();
             rd.exportCultures = cultureList;
-            rd.excludeList = excludeList;
+            rd.excludeKeyList = excludeKeyList;
+            rd.excludeCommentList = excludeCommentList;
+
+            List<string> regexes = AppSettings.Default.ExcludeFilenames.Cast<string>()
+                                                                       .ToList();
 
             var searchoptions = deepSearch ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-            var files = Directory.GetFiles(path, "*.resx", searchoptions);
+            var files = Directory.GetFiles(path, "*.resx", searchoptions)
+                                 .Where(filename => !regexes.Any(pattern => Regex.IsMatch(filename, pattern)))
+                                 .ToList();
 
             foreach (string f in files)
             {
@@ -372,7 +386,7 @@
             }
 
             // hide key column
-            if (Properties.Settings.Default.HideKeys)
+            if (AppSettings.Default.HideKeys)
             {
                 var column = sheet.Columns.get_Item(ExcelKeyColumn) as Excel.Range;
                 column.Hidden = true;
@@ -380,7 +394,7 @@
             }
 
             // hide comment column
-            if (Properties.Settings.Default.HideComments)
+            if (AppSettings.Default.HideComments)
             {
                 var column = sheet.Columns.get_Item(ExcelCommentColumn) as Excel.Range;
                 //column.Hidden = true;
@@ -514,6 +528,7 @@
             // Create resx reader for primary language
             var primaryEntries = primaryResx.Read()
                                       .Where(k => this.ValidateKey(k.Key))
+                                      .Where(k => this.ValidateComment(k.Comment))
                                       .Where(k => !string.IsNullOrEmpty(k.Value));
 
             if (primaryEntries.Count() > 0)
@@ -582,7 +597,17 @@
         /// <returns>true when key should be translated</returns>
         private bool ValidateKey(string key)
         {
-            return !excludeList.Any(e => key.EndsWith(e));
+            return !excludeKeyList.Any(pattern => Regex.IsMatch(key, pattern));
+        }
+
+        /// <summary>
+        /// Validates whether a key is valid for translation
+        /// </summary>
+        /// <param name="comment">translation key</param>
+        /// <returns>true when key should be translated</returns>
+        private bool ValidateComment(string comment)
+        {
+            return !excludeCommentList.Any(pattern => Regex.IsMatch(comment, pattern));
         }
 
         /// <summary>
