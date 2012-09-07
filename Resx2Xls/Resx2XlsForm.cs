@@ -9,17 +9,10 @@ namespace Resx2Xls
     using Excel = Microsoft.Office.Interop.Excel;
     using AppSettings = Resx2Xls.Properties.Settings;
     using ResX = Resx2Xls.Properties.Resources;
+    using System.Diagnostics;
 
     public partial class Resx2XlsForm : Form
     {
-        enum ResxToXlsOperation
-        {
-            Create,
-            Build,
-        };
-
-        private ResxToXlsOperation _operation;
-
         public Resx2XlsForm()
         {
             CultureInfo ci = CultureInfo.GetCultureInfo("en-US");
@@ -35,39 +28,42 @@ namespace Resx2Xls
             this.hideCommentColumnCheckbox.Checked = AppSettings.Default.HideComments;
             this.hideKeyColumnCheckbox.Checked = AppSettings.Default.HideKeys;
 
-            FillCultures();
-
-            this.radioButtonCreateXls.CheckedChanged += new EventHandler(radioButton_CheckedChanged);
-            this.radioButtonBuildXls.CheckedChanged += new EventHandler(radioButton_CheckedChanged);
+            this.FillCultures();
         }
 
-        void radioButton_CheckedChanged(object sender, EventArgs e)
+        private enum Conversion
         {
-            this.radioButtonCreateXls.CheckedChanged -= new EventHandler(radioButton_CheckedChanged);
-            this.radioButtonBuildXls.CheckedChanged -= new EventHandler(radioButton_CheckedChanged);
+            ResXToXls,
+            XlsToResx,
+        };
 
-            if (this.radioButtonCreateXls.Checked)
-            {
-                _operation = ResxToXlsOperation.Create;
-            }
-            if (this.radioButtonBuildXls.Checked)
-            {
-                _operation = ResxToXlsOperation.Build;
-            }
-            if (((RadioButton)sender).Checked)
-            {
-                if (((RadioButton)sender) == this.radioButtonCreateXls)
-                {
-                    this.radioButtonBuildXls.Checked = false;
-                }
+        private enum WizardStep
+        {
+            Start = 0,
+            ResX1 = 1,
+            ResX2 = 2,
+            ResX3 = 3,
+            Xls1 = 4,
+            Finish = 5,
+        }
 
-                if (((RadioButton)sender) == this.radioButtonBuildXls)
+        private Conversion ConversionType
+        {
+            get
+            {
+                if (this.radioButtonCreateXls.Checked)
                 {
-                    this.radioButtonCreateXls.Checked = false;
+                    return Conversion.ResXToXls;
+                }
+                else if (this.radioButtonGenerateResx.Checked)
+                {
+                    return Conversion.XlsToResx;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Unknown conversion type");
                 }
             }
-            this.radioButtonCreateXls.CheckedChanged += new EventHandler(radioButton_CheckedChanged);
-            this.radioButtonBuildXls.CheckedChanged += new EventHandler(radioButton_CheckedChanged);
         }
 
         public void ResxToXls(
@@ -99,6 +95,8 @@ namespace Resx2Xls
             this.textBoxSummary.Text += text + Environment.NewLine;
             this.textBoxSummary.SelectionStart = this.textBoxSummary.Text.Length;
             this.textBoxSummary.ScrollToCaret();
+
+            Application.DoEvents();
         }
 
         private void XlsToResx(string xlsFile)
@@ -255,15 +253,11 @@ namespace Resx2Xls
 
             var excludeFilter = new List<string>(this.textBoxExclude.Text.Split(';'));
 
-            var cultures = new List<CultureInfo>();
-            for (int i = 0; i < this.listBoxSelected.Items.Count; i++)
-            {
-                cultures.Add((CultureInfo)this.listBoxSelected.Items[i]);
-            }
+            List<CultureInfo> cultures = this.listBoxSelected.Items.Cast<CultureInfo>().ToList();
 
-            switch (_operation)
+            switch (ConversionType)
             {
-                case ResxToXlsOperation.Create:
+                case Conversion.ResXToXls:
 
                     if (String.IsNullOrEmpty(this.textBoxFolder.Text))
                     {
@@ -273,6 +267,7 @@ namespace Resx2Xls
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Information);
                         this.wizardControl1.CurrentStepIndex = this.intermediateStepProject.StepIndex;
+                        this.wizardControl1.Enabled = true;
                         return;
                     }
 
@@ -290,112 +285,98 @@ namespace Resx2Xls
                             excludeFilter,
                             this.checkBoxFolderNaming.Checked);
                         MessageBox.Show(
+                            this,
                             "Excel Document created.",
                             "Create",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Information);
+
+                        this.Close();
+                    }
+                    else
+                    {
+                        this.wizardControl1.Enabled = true;
                     }
                     break;
-                case ResxToXlsOperation.Build:
-                    if (String.IsNullOrEmpty(this.textBoxXls.Text))
-                    {
-                        MessageBox.Show(
-                            "You must select the Excel document to update",
-                            "Update",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
-                        this.wizardControl1.CurrentStepIndex = this.intermediateStepXlsSelect.StepIndex;
-                        return;
-                    }
 
+                case Conversion.XlsToResx:
                     XlsToResx(this.textBoxXls.Text);
                     MessageBox.Show("Localized Resources created.", "Build", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    this.Close();
                     break;
 
                 default:
                     throw new InvalidOperationException();
             }
-
-            this.Close();
         }
 
         private void wizardControl1_NextButtonClick(WizardBase.WizardControl sender, WizardBase.WizardNextButtonClickEventArgs args)
         {
-            int index = this.wizardControl1.CurrentStepIndex;
-
-            int offset = 1; // è un bug? se non faccio così
-
-            switch (index)
+            switch ((WizardStep)this.wizardControl1.CurrentStepIndex)
             {
-                case 0:
-
-                    switch (_operation)
+                case WizardStep.Start:
+                    switch (this.ConversionType)
                     {
-                        case ResxToXlsOperation.Create:
-                            this.wizardControl1.CurrentStepIndex = 1 - offset;
+                        case Conversion.ResXToXls:
+                            args.NextStepIndex = (int)WizardStep.ResX1;
                             break;
-                        case ResxToXlsOperation.Build:
-                            this.wizardControl1.CurrentStepIndex = 4 - offset;
+                        case Conversion.XlsToResx:
+                            args.NextStepIndex = (int)WizardStep.Xls1;
                             break;
                         default:
-                            break;
+                            throw new InvalidOperationException("Unknown conversion");
                     }
                     break;
 
-                case 1:
-
-                    switch (_operation)
-                    {
-                        default:
-                            break;
-                    }
+                case WizardStep.ResX3:
+                    args.NextStepIndex = (int)WizardStep.Finish;
+                    this.textBoxSummary.Text = ResX.summary_create_excel + Environment.NewLine;
                     break;
 
-
-                case 3:
-
-                    switch (_operation)
+                case WizardStep.Xls1:
+                    if (File.Exists(this.textBoxXls.Text))
                     {
-                        case ResxToXlsOperation.Create:
-                            this.wizardControl1.CurrentStepIndex = 5 - offset;
-                            this.textBoxSummary.Text = ResX.summary_create_excel;
-                            break;
-                        default:
-                            break;
+                        this.textBoxSummary.Text = ResX.summary_create_resx + Environment.NewLine;
                     }
-                    break;
+                    else
+                    {
+                        MessageBox.Show(
+                            this,
+                            "Select an Excel document to continue",
+                            "Update",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
 
-                case 4:
-                    this.textBoxSummary.Text = ResX.summary_create_resx;
+                        args.Cancel = true;
+                    }
                     break;
             }
         }
 
         private void wizardControl1_BackButtonClick(WizardBase.WizardControl sender, WizardBase.WizardClickEventArgs args)
         {
-            int index = this.wizardControl1.CurrentStepIndex;
-
-            int offset = 1; // è un bug? se non faccio così
-
-            switch (index)
+            switch ((WizardStep)this.wizardControl1.CurrentStepIndex)
             {
-                case 5:
+                case WizardStep.Finish:
 
-                    switch (_operation)
+                    switch (ConversionType)
                     {
-                        case ResxToXlsOperation.Create:
-                            this.wizardControl1.CurrentStepIndex = 3 + offset;
+                        case Conversion.ResXToXls:
+                            this.wizardControl1.CurrentStepIndex = (int)WizardStep.ResX3;
+                            args.Cancel = true;
                             break;
                         default:
                             break;
                     }
                     break;
-                case 4:
+                case WizardStep.Xls1:
 
-                    switch (_operation)
+                    switch (ConversionType)
                     {
-                        case ResxToXlsOperation.Build:
-                            this.wizardControl1.CurrentStepIndex = 0 + offset;
+                        case Conversion.XlsToResx:
+                            this.wizardControl1.CurrentStepIndex = (int)WizardStep.Start;
+                            args.Cancel = true;
                             break;
                         default:
                             break;
@@ -407,6 +388,7 @@ namespace Resx2Xls
 
         private void wizardControl1_FinishButtonClick(object sender, EventArgs e)
         {
+            this.wizardControl1.Enabled = false;
             FinishWizard();
         }
 

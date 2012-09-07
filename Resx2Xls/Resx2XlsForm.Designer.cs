@@ -34,7 +34,7 @@ namespace Resx2Xls
             this.wizardControl1 = new WizardBase.WizardControl();
             this.startStep1 = new WizardBase.StartStep();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.radioButtonBuildXls = new System.Windows.Forms.RadioButton();
+            this.radioButtonGenerateResx = new System.Windows.Forms.RadioButton();
             this.radioButtonCreateXls = new System.Windows.Forms.RadioButton();
             this.intermediateStepProject = new WizardBase.IntermediateStep();
             this.label7 = new System.Windows.Forms.Label();
@@ -124,7 +124,7 @@ namespace Resx2Xls
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.radioButtonBuildXls);
+            this.groupBox1.Controls.Add(this.radioButtonGenerateResx);
             this.groupBox1.Controls.Add(this.radioButtonCreateXls);
             this.groupBox1.Location = new System.Drawing.Point(198, 93);
             this.groupBox1.Name = "groupBox1";
@@ -133,15 +133,15 @@ namespace Resx2Xls
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Options";
             // 
-            // radioButtonBuildXls
+            // radioButtonGenerateResx
             // 
-            this.radioButtonBuildXls.AutoSize = true;
-            this.radioButtonBuildXls.Location = new System.Drawing.Point(45, 52);
-            this.radioButtonBuildXls.Name = "radioButtonBuildXls";
-            this.radioButtonBuildXls.Size = new System.Drawing.Size(258, 17);
-            this.radioButtonBuildXls.TabIndex = 1;
-            this.radioButtonBuildXls.Text = "Generate resx files from localized Excel document";
-            this.radioButtonBuildXls.UseVisualStyleBackColor = true;
+            this.radioButtonGenerateResx.AutoSize = true;
+            this.radioButtonGenerateResx.Location = new System.Drawing.Point(45, 52);
+            this.radioButtonGenerateResx.Name = "radioButtonGenerateResx";
+            this.radioButtonGenerateResx.Size = new System.Drawing.Size(258, 17);
+            this.radioButtonGenerateResx.TabIndex = 1;
+            this.radioButtonGenerateResx.Text = "Generate resx files from localized Excel document";
+            this.radioButtonGenerateResx.UseVisualStyleBackColor = true;
             // 
             // radioButtonCreateXls
             // 
@@ -531,7 +531,7 @@ namespace Resx2Xls
         private WizardBase.FinishStep finishStep1;
         private WizardBase.IntermediateStep intermediateStepXlsSelect;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.RadioButton radioButtonBuildXls;
+        private System.Windows.Forms.RadioButton radioButtonGenerateResx;
         private System.Windows.Forms.RadioButton radioButtonCreateXls;
         private WizardBase.IntermediateStep intermediateStepOptions;
         private System.Windows.Forms.Label label3;

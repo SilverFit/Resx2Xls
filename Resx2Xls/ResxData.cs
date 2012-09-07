@@ -339,7 +339,7 @@
                 Marshal.ReleaseComObject(lastcell);
 
                 var screenshotFiles = Directory.GetFiles(sheetScreenshotDirectory)
-                                               .Where(f => ScreenshotExtensions.Contains(Path.GetExtension(f)));
+                                               .Where(f => ScreenshotExtensions.Contains(Path.GetExtension(f).ToLower()));
                 foreach (var screenshotFile in screenshotFiles)
                 {
                     int width, height;
