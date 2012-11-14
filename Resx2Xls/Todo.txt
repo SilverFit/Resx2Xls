@@ -8,5 +8,6 @@ Long term
 - Automatically add exported .resx files into solutions
 - Automatically adjust japanese/chinese fonts in xna projects
 - Read input .resx files from a solution file instead of recursively
-
+- Migrate from winforms to WPF
+ - check http://msdn.microsoft.com/en-us/library/aa972123%28v=vs.90%29.aspx for wizard sample
 
