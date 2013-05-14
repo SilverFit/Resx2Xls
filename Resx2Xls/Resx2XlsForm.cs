@@ -2,14 +2,14 @@ namespace Resx2Xls
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Windows.Forms;
-    using Excel = Microsoft.Office.Interop.Excel;
     using AppSettings = Resx2Xls.Properties.Settings;
+    using Excel = Microsoft.Office.Interop.Excel;
     using ResX = Resx2Xls.Properties.Resources;
-    using System.Diagnostics;
 
     public partial class Resx2XlsForm : Form
     {
@@ -189,7 +189,6 @@ namespace Resx2Xls
             Excel.Application app = new Excel.Application();
             Excel.Workbook wb = app.Workbooks.Open(
                 Filename: path,
-                Format: 5,
                 Origin: Excel.XlPlatform.xlWindows, 
                 Editable: true,
                 AddToMru: true);

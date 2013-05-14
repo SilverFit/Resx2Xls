@@ -247,7 +247,9 @@
             // Save the Workbook and force overwriting by rename trick
             string tmpFile = Path.GetTempFileName();
             File.Delete(tmpFile);
-            wb.SaveAs(Filename: tmpFile, AccessMode: Excel.XlSaveAsAccessMode.xlNoChange);
+
+            Excel.XlFileFormat fileFormat = Path.GetExtension(outputPath) == ".xls" ? Excel.XlFileFormat.xlExcel8 : Excel.XlFileFormat.xlWorkbookDefault;
+            wb.SaveAs(Filename: tmpFile, AccessMode: Excel.XlSaveAsAccessMode.xlNoChange, FileFormat: fileFormat);
             File.Delete(outputPath);
 
             ExcelQuit(app, wb);

@@ -86,16 +86,16 @@ namespace Resx2Xls
             // openFileDialogXls
             // 
             this.openFileDialogXls.DefaultExt = "xlsx";
-            this.openFileDialogXls.Filter = "*.xlsx|*.xls";
+            this.openFileDialogXls.Filter = "Excel Workbook (*.xlsx,*.xls)|*.xlsx;*.xls";
             // 
             // saveFileDialogXls
             // 
-            this.saveFileDialogXls.DefaultExt = "xlsx";
-            this.saveFileDialogXls.Filter = "*.xlsx|*.xls";
+            this.saveFileDialogXls.DefaultExt = "xls";
+            this.saveFileDialogXls.Filter = "Excel Workbook (*.xlsx)|*.xlsx|Excel 97-2003 Workbook (*.xls)|*.xls";
             // 
             // wizardControl1
             // 
-            this.wizardControl1.BackButtonEnabled = true;
+            this.wizardControl1.BackButtonEnabled = false;
             this.wizardControl1.BackButtonVisible = true;
             this.wizardControl1.CancelButtonEnabled = true;
             this.wizardControl1.CancelButtonVisible = true;
