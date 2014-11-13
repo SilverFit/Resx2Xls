@@ -30,7 +30,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.2.0.0</ApplicationVersion>
+    <ApplicationVersion>1.4.0.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -95,7 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="StringHelper.cs" />
-    <None Include="Properties\AssemblyInfo.cs.template" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ImageHelper.cs" />
     <Compile Include="Resx2XlsForm.cs">
       <SubType>Form</SubType>
@@ -104,7 +104,6 @@
       <DependentUpon>Resx2XlsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -193,6 +192,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>"C:\Program Files\TortoiseSVN\bin\subwcrev.exe" "$(ProjectDir)." "$(ProjectDir)Properties\AssemblyInfo.cs.template" "$(ProjectDir)Properties\AssemblyInfo.cs"</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
 </Project>
