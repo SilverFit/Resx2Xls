@@ -14,3 +14,5 @@ Additional features:
 - Progress feedback while converting
 
 `Note: Excel needs to be installed, Resx2Xls needs its COM interface.`
+
+![Alt text](/Screenshots/Screenshot1.png?raw=true "Screenshot")
