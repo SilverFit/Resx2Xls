@@ -1,6 +1,9 @@
 ﻿Resx2Xls is not done yet..
 
 Features we would like soon
+- Give clearer instructions on how to format the regular expressions (for excluded keys/comments)
+- Give all columns in the produced excel file text wrapping
+- Handle the case where multiple resources within the solution root have the same name
 - Convert multiple solutions into 1 excel file
 - Automatically mark bad translations (faulty string inserts, missing {0})
 
